@@ -1,0 +1,9 @@
+.env**
+README.md
+
+# Docker
+docker-compose.yaml
+build/**/Dockerfile*
+
+# Git
+.git**
