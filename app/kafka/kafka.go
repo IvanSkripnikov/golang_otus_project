@@ -19,9 +19,9 @@ const (
 
 type Message struct {
 	Type     string
-	BannerId int
-	SlotId   int
-	GroupId  int
+	BannerID int
+	SlotID   int
+	GroupID  int
 }
 
 var ErrUserNotFoundInProducer = errors.New("user not found")
@@ -34,7 +34,7 @@ func SendKafkaMessage(producer sarama.SyncProducer, message Message) error {
 
 	msg := &sarama.ProducerMessage{
 		Topic: KafkaTopic,
-		Key:   sarama.StringEncoder(strconv.Itoa(message.BannerId)),
+		Key:   sarama.StringEncoder(strconv.Itoa(message.BannerID)),
 		Value: sarama.StringEncoder(messageJSON),
 	}
 

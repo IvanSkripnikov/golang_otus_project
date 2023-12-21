@@ -26,7 +26,7 @@ func InitDataBase() *sql.DB {
 	}
 
 	host := "db"
-	// host = "localhost"
+	host = "localhost"
 	user := env("MYSQL_USER", "user")
 	pass := env("MYSQL_PASSWORD", "pass")
 	prot := env("MYSQL_PROT", "tcp")
@@ -65,9 +65,9 @@ func GetBannerEvents(bannerId, groupId, slotId int, eventType string) int {
 	return count
 }
 
-func GetBannersForSlot(slotId int) ([]int, error) {
+func GetBannersForSlot(slotID int) ([]int, error) {
 	query := "SELECT banner_id from relations_banner_slot WHERE slot_id = ?"
-	rows, err := DB.Query(query, slotId)
+	rows, err := DB.Query(query, slotID)
 	if err != nil {
 		return nil, err
 	}

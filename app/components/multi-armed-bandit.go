@@ -9,17 +9,17 @@ import (
 	"sort"
 )
 
-func GetNeedBanner(slotId, groupId int) int {
+func GetNeedBanner(slotID, groupID int) int {
 	resultBannerId := 0
 
 	// находим баннеры для данного слота
-	bannersForSlot, err := database.GetBannersForSlot(slotId)
+	bannersForSlot, err := database.GetBannersForSlot(slotID)
 	if err != nil {
 		logger.SendToFatalLog("error while search banners.")
 	}
 
 	// получаем рейтинги по баннерам
-	rateBanners := GetBannerRatings(bannersForSlot, groupId, slotId)
+	rateBanners := GetBannerRatings(bannersForSlot, groupID, slotID)
 
 	resultBannerId = rateBanners[0].BannerId
 
