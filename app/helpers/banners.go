@@ -30,7 +30,7 @@ func GetAllBanners(w http.ResponseWriter, r *http.Request) {
 	var banners []models.Banner
 	for rows.Next() {
 		banner := models.Banner{}
-		if err = rows.Scan(&banner.Id, &banner.Title, &banner.Body, &banner.CreatedAt, &banner.Active); err != nil {
+		if err = rows.Scan(&banner.ID, &banner.Title, &banner.Body, &banner.CreatedAt, &banner.Active); err != nil {
 			log.Println(err.Error())
 			continue
 		}
@@ -50,9 +50,9 @@ func GetAllBanners(w http.ResponseWriter, r *http.Request) {
 
 func GetBanner(w http.ResponseWriter, r *http.Request) {
 	var banner models.Banner
-	banner.Id, _ = getIdFromRequestString(r.URL.Path)
+	banner.ID, _ = getIdFromRequestString(r.URL.Path)
 
-	if banner.Id == 0 {
+	if banner.ID == 0 {
 		wrongParamsResponse(w)
 		return
 	}
@@ -65,7 +65,7 @@ func GetBanner(w http.ResponseWriter, r *http.Request) {
 
 	defer stmt.Close()
 
-	if err = stmt.QueryRow(banner.Id).Scan(&banner.Id, &banner.Title, &banner.Body, &banner.CreatedAt, &banner.Active); err != nil {
+	if err = stmt.QueryRow(banner.ID).Scan(&banner.ID, &banner.Title, &banner.Body, &banner.CreatedAt, &banner.Active); err != nil {
 		log.Println(err.Error())
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprint(w, "{ \"message\": \"Not Found\"}")
@@ -88,8 +88,8 @@ func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
 
 	params, resultString := getParamsFromQueryString(r.URL.Path)
 
-	slotId, okSlot := params["slot"]
-	bannerId, okBanner := params["banner"]
+	slotID, okSlot := params["slot"]
+	bannerID, okBanner := params["banner"]
 
 	if !okSlot || !okBanner || resultString != "" {
 		wrongParamsResponse(w)
@@ -105,7 +105,7 @@ func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(bannerId, slotId)
+	_, err = stmt.Exec(bannerID, slotID)
 
 	if checkError(w, err) {
 		return
@@ -119,8 +119,8 @@ func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request) {
 
 	params, resultString := getParamsFromQueryString(r.URL.Path)
 
-	slotId, okSlot := params["slot"]
-	bannerId, okBanner := params["banner"]
+	slotID, okSlot := params["slot"]
+	bannerID, okBanner := params["banner"]
 
 	if !okSlot || !okBanner || resultString != "" {
 		wrongParamsResponse(w)
@@ -136,7 +136,7 @@ func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request) {
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(bannerId, slotId)
+	_, err = stmt.Exec(bannerID, slotID)
 
 	if checkError(w, err) {
 		return
@@ -150,8 +150,8 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 
 	params, resultString := getParamsFromQueryString(r.URL.Path)
 
-	slotId, okSlot := params["slot"]
-	groupId, okGroup := params["group"]
+	slotID, okSlot := params["slot"]
+	groupID, okGroup := params["group"]
 
 	if !okSlot || !okGroup || resultString != "" {
 		wrongParamsResponse(w)
@@ -159,7 +159,7 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// получаем id баннера
-	bannerId := components.GetNeedBanner(slotId, groupId)
+	bannerId := components.GetNeedBanner(slotID, groupID)
 
 	// записываем событие просмотра
 	query := fmt.Sprintf("INSERT INTO %s (`type`, `banner_id`, `slot_id`, `group_id`) VALUES (?, ?, ?, ?)", "events")
@@ -170,7 +170,7 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec("show", bannerId, slotId, groupId)
+	_, err = stmt.Exec("show", bannerId, slotID, groupID)
 
 	if checkError(w, err) {
 		return
@@ -190,9 +190,9 @@ func EventClick(w http.ResponseWriter, r *http.Request) {
 
 	params, resultString := getParamsFromQueryString(r.URL.Path)
 
-	slotId, okSlot := params["slot"]
-	groupId, okGroup := params["group"]
-	bannerId, okBanner := params["banner"]
+	slotID, okSlot := params["slot"]
+	groupID, okGroup := params["group"]
+	bannerID, okBanner := params["banner"]
 
 	if !okSlot || !okGroup || !okBanner || resultString != "" {
 		wrongParamsResponse(w)
@@ -211,7 +211,7 @@ func EventClick(w http.ResponseWriter, r *http.Request) {
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec("click", bannerId, slotId, groupId)
+	_, err = stmt.Exec("click", bannerID, slotID, groupID)
 
 	if checkError(w, err) {
 		return
@@ -280,8 +280,8 @@ func getParamsFromQueryString(url string) (map[string]int, string) {
 	return resultMap, outMessage
 }
 
-func sendEventToKafka(eventName string, bannerId, slotId, groupId int) {
-	message := kafka.Message{Type: eventName, BannerId: bannerId, SlotId: slotId, GroupId: groupId}
+func sendEventToKafka(eventName string, bannerID, slotID, groupID int) {
+	message := kafka.Message{Type: eventName, BannerID: bannerID, SlotID: slotID, GroupID: groupID}
 
 	producer, err := kafka.SetupProducer()
 	if err != nil {

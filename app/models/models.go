@@ -1,7 +1,7 @@
 package models
 
 type Banner struct {
-	Id        int
+	ID        int
 	Title     string
 	Body      string
 	CreatedAt string

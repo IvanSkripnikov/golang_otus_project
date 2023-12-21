@@ -10,7 +10,7 @@ import (
 )
 
 func GetNeedBanner(slotID, groupID int) int {
-	resultBannerId := 0
+	resultBannerID := 0
 
 	// находим баннеры для данного слота
 	bannersForSlot, err := database.GetBannersForSlot(slotID)
@@ -21,9 +21,9 @@ func GetNeedBanner(slotID, groupID int) int {
 	// получаем рейтинги по баннерам
 	rateBanners := GetBannerRatings(bannersForSlot, groupID, slotID)
 
-	resultBannerId = rateBanners[0].BannerID
+	resultBannerID = rateBanners[0].BannerID
 
-	return resultBannerId
+	return resultBannerID
 }
 
 func GetRating(averageRating float64, currentCount float64, allCounts float64) float64 {
