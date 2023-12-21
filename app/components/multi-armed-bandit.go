@@ -1,109 +1,73 @@
 package components
 
 import (
-	"app/database"
 	"fmt"
-	"log"
 	"math"
 	"sort"
+
+	"app/database"
+	"app/logger"
+	"app/models"
 )
 
 func GetNeedBanner(slotId, groupId int) int {
 	resultBannerId := 0
 
 	// находим баннеры для данного слота
-	bannersForSlot, err := GetSlotBanners(slotId)
+	bannersForSlot, err := database.GetBannersForSlot(slotId)
 	if err != nil {
-		log.Fatal("error while search banners.")
+		logger.SendToFatalLog("error while search banners.")
 	}
 
-	rateBanners := make([]float64, len(bannersForSlot))
+	// получаем рейтинги по баннерам
+	rateBanners := GetBannerRatings(bannersForSlot, groupId, slotId)
 
-	for _, bannerId := range bannersForSlot {
-		allShowsBanner := float64(GetBannerEvents(bannerId, groupId, "show"))
-		allClickBanner := float64(GetBannerEvents(bannerId, groupId, "click"))
-		allShows := float64(GetShows())
-		averageRating := allClickBanner / allShowsBanner
-
-		rate := GetRating(averageRating, allShowsBanner, allShows)
-
-		rateBanners = append(rateBanners, rate)
-	}
-
-	sort.Slice(rateBanners, func(i, j int) bool {
-		return rateBanners[i] < rateBanners[j]
-	})
-
-	fmt.Println(rateBanners)
+	resultBannerId = rateBanners[0].BannerId
 
 	return resultBannerId
 }
 
-func GetShows() int {
-	query := "SELECT COUNT(*) from events WHERE type = 'show'"
-	stmt, err := database.DB.Query(query)
-
-	if err != nil {
-		return 0
-	}
-
-	defer stmt.Close()
-
-	count := 0
-
-	for stmt.Next() {
-		if err := stmt.Scan(&count); err != nil {
-			return 0
-		}
-	}
-
-	return count
-}
-
-func GetBannerEvents(bannerId, groupId int, eventType string) int {
-	query := "SELECT COUNT(*) from events WHERE banner_id = ? AND group_id = ? type = ?"
-	stmt, err := database.DB.Query(query, bannerId, groupId, eventType)
-
-	if err != nil {
-		return 0
-	}
-
-	defer stmt.Close()
-
-	count := 0
-
-	for stmt.Next() {
-		if err := stmt.Scan(&count); err != nil {
-			return 0
-		}
-	}
-
-	return count
-}
-
-func GetSlotBanners(slotId int) ([]int, error) {
-	query := "SELECT banner_id from relations_banner_slot WHERE slot_id = ?"
-	rows, err := database.DB.Query(query, slotId)
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer rows.Close()
-
-	banners := make([]int, 0)
-	banner := 0
-	for rows.Next() {
-		if err = rows.Scan(&banner); err != nil {
-			log.Println(err.Error())
-			continue
-		}
-		banners = append(banners, banner)
-	}
-
-	return banners, nil
-}
-
 func GetRating(averageRating float64, currentCount float64, allCounts float64) float64 {
-	return averageRating + (math.Sqrt((2 * math.Log(allCounts)) / currentCount))
+	return averageRating + math.Sqrt((2*math.Log(allCounts))/currentCount)
+}
+
+func GetBannerRatings(bannersForSlot []int, groupId, slotId int) []models.Rating {
+	rateBanners := make([]models.Rating, len(bannersForSlot))
+
+	var averageRating, rate float64
+	for k, bannerId := range bannersForSlot {
+		allShowsBanner := float64(database.GetBannerEvents(bannerId, groupId, slotId, "show"))
+		allClickBanner := float64(database.GetBannerEvents(bannerId, groupId, slotId, "click"))
+		allShows := float64(database.GetAllEvents("show"))
+
+		// находим средний рейтинг баннера
+		if allClickBanner == 0 || allShowsBanner == 0 {
+			averageRating = 0
+		} else {
+			averageRating = allClickBanner / allShowsBanner
+		}
+
+		// считаем рейтинг баннера
+		if allShowsBanner == 0 {
+			rate = 0
+		} else {
+			rate = GetRating(averageRating, allShowsBanner, allShows)
+		}
+
+		rating := models.Rating{
+			BannerId: bannerId,
+			Value:    rate,
+		}
+
+		rateBanners[k] = rating
+	}
+
+	// сортируем итоговый набор рейтингов
+	sort.Slice(rateBanners, func(i, j int) bool {
+		return rateBanners[i].Value > rateBanners[j].Value
+	})
+
+	fmt.Println(rateBanners)
+
+	return rateBanners
 }

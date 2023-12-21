@@ -1,17 +1,6 @@
 CREATE DATABASE IF NOT EXISTS test;
 USE test;
 
-CREATE TABLE IF NOT EXISTS `tasks` (
-    `id`         BIGINT NOT NULL AUTO_INCREMENT,
-    `title`      VARCHAR(256) NOT NULL,
-    `body`       TEXT,
-    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
-);
-
-INSERT INTO tasks (title, body) VALUES ("task1", "タスク1です"), ("task2", "タスク2です");
-
 CREATE TABLE IF NOT EXISTS banners (
     id         BIGINT NOT NULL AUTO_INCREMENT,
     title      VARCHAR(256) NOT NULL,
@@ -103,7 +92,11 @@ INSERT INTO relations_banner_slot (banner_id, slot_id) VALUES
     (1, 1),
     (1, 7),
     (1, 8),
-    (1, 9)
+    (1, 9),
+    (3, 1),
+    (3, 7),
+    (3, 8),
+    (3, 9)
 ;
 
 CREATE TABLE IF NOT EXISTS events (

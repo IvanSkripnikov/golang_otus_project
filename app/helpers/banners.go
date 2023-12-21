@@ -1,20 +1,19 @@
 package helpers
 
 import (
+	"app/components"
+	"app/database"
+	"app/kafka"
+	"app/logger"
+	"app/models"
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
-
-	"app/components"
-	"app/database"
-	"app/kafka"
-	"app/models"
-
-	"github.com/gin-gonic/gin"
 )
 
 func GetAllBanners(w http.ResponseWriter, r *http.Request) {
@@ -127,7 +126,8 @@ func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stmt, err := database.DB.Prepare(fmt.Sprintf("DELETE FROM %s WHERE banner_id=? AND slot_id=?", "relations_banner_slot"))
+	query := "DELETE FROM relations_banner_slot WHERE banner_id=? AND slot_id=?"
+	stmt, err := database.DB.Prepare(query)
 
 	if checkError(w, err) {
 		return
@@ -157,9 +157,31 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// получаем id баннера
 	bannerId := components.GetNeedBanner(slotId, groupId)
 
-	fmt.Fprint(w, strconv.Itoa(bannerId))
+	// записываем событие просмотра
+	query := fmt.Sprintf("INSERT INTO %s (`type`, `banner_id`, `slot_id`, `group_id`) VALUES (?, ?, ?, ?)", "events")
+	stmt, err := database.DB.Prepare(query)
+
+	if checkError(w, err) {
+		return
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec("show", bannerId, slotId, groupId)
+
+	if checkError(w, err) {
+		return
+	}
+	// отправляем событие в кафку
+	// sendEventToKafka("click", bannerId, slotId, groupId)
+
+	_, err = fmt.Fprint(w, strconv.Itoa(bannerId))
+	if err != nil {
+		logger.SendToErrorLog(err.Error())
+		return
+	}
 }
 
 func EventClick(w http.ResponseWriter, r *http.Request) {
@@ -176,11 +198,11 @@ func EventClick(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query := fmt.Sprintf("INSERT INTO %s (`type`, `banner_id`, `slot_id`, `group_id`) VALUES (?, ?, ?, ?)", "events")
+	query := "INSERT INTO events (type, banner_id, slot_id, group_id) VALUES (?, ?, ?, ?)"
 	stmt, err := database.DB.Prepare(query)
 
 	// отправляем событие в кафку
-	sendEventToKafka("click", bannerId, slotId, groupId)
+	// sendEventToKafka("click", bannerId, slotId, groupId)
 
 	if checkError(w, err) {
 		return

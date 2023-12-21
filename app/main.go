@@ -1,12 +1,11 @@
 package main
 
 import (
+	"app/controllers"
 	"fmt"
 	"net/http"
 	"regexp"
 	"strings"
-
-	"app/controllers"
 )
 
 type route struct {
@@ -15,17 +14,15 @@ type route struct {
 	handler http.HandlerFunc
 }
 
-var (
-	routes = []route{
-		newRoute("GET", "/", controllers.HelloPageHandler),
-		newRoute("GET", "/banners", controllers.BannersHandler),
-		newRoute("GET", "/banners/([0-9]+)", controllers.BannerHandler),
-		newRoute("GET", "/add_banner_to_slot/([\\S]+)", controllers.AddBannerHandler),
-		newRoute("GET", "/remove_banner_from_slot/([\\S]+)", controllers.RemoveBannerHandler),
-		newRoute("GET", "/get_banner_for_show/([\\S]+)", controllers.GetBannerForShowHandler),
-		newRoute("GET", "/event_click/([\\S]+)", controllers.ClickHandler),
-	}
-)
+var routes = []route{
+	newRoute("GET", "/", controllers.HelloPageHandler),
+	newRoute("GET", "/banners", controllers.BannersHandler),
+	newRoute("GET", "/banners/([0-9]+)", controllers.BannerHandler),
+	newRoute("POST", "/add_banner_to_slot/([\\S]+)", controllers.AddBannerHandler),
+	newRoute("POST", "/remove_banner_from_slot/([\\S]+)", controllers.RemoveBannerHandler),
+	newRoute("GET", "/get_banner_for_show/([\\S]+)", controllers.GetBannerForShowHandler),
+	newRoute("POST", "/event_click/([\\S]+)", controllers.ClickHandler),
+}
 
 func initHTTPServer() error {
 	http.HandleFunc("/", Serve)
