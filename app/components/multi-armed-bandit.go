@@ -21,7 +21,7 @@ func GetNeedBanner(slotID, groupID int) int {
 	// получаем рейтинги по баннерам
 	rateBanners := GetBannerRatings(bannersForSlot, groupID, slotID)
 
-	resultBannerId = rateBanners[0].BannerId
+	resultBannerId = rateBanners[0].BannerID
 
 	return resultBannerId
 }
@@ -34,9 +34,9 @@ func GetBannerRatings(bannersForSlot []int, groupId, slotId int) []models.Rating
 	rateBanners := make([]models.Rating, len(bannersForSlot))
 
 	var averageRating, rate float64
-	for k, bannerId := range bannersForSlot {
-		allShowsBanner := float64(database.GetBannerEvents(bannerId, groupId, slotId, "show"))
-		allClickBanner := float64(database.GetBannerEvents(bannerId, groupId, slotId, "click"))
+	for k, bannerID := range bannersForSlot {
+		allShowsBanner := float64(database.GetBannerEvents(bannerID, groupId, slotId, "show"))
+		allClickBanner := float64(database.GetBannerEvents(bannerID, groupId, slotId, "click"))
 		allShows := float64(database.GetAllEvents("show"))
 
 		// находим средний рейтинг баннера
@@ -54,7 +54,7 @@ func GetBannerRatings(bannersForSlot []int, groupId, slotId int) []models.Rating
 		}
 
 		rating := models.Rating{
-			BannerId: bannerId,
+			BannerID: bannerID,
 			Value:    rate,
 		}
 

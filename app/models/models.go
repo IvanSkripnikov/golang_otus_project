@@ -9,6 +9,6 @@ type Banner struct {
 }
 
 type Rating struct {
-	BannerId int
+	BannerID int
 	Value    float64
 }
