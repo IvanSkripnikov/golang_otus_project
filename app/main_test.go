@@ -1,15 +1,16 @@
 package main
 
 import (
-	"app/controllers"
-	"app/database"
-	"app/logger"
 	"context"
-	"github.com/gavv/httpexpect/v2"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"app/controllers"
+	"app/database"
+	"app/logger"
+	"github.com/gavv/httpexpect/v2"
 )
 
 func TestRoot(t *testing.T) {

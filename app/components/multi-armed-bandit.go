@@ -1,12 +1,13 @@
 package components
 
 import (
-	"app/database"
-	"app/logger"
-	"app/models"
 	"fmt"
 	"math"
 	"sort"
+
+	"app/database"
+	"app/logger"
+	"app/models"
 )
 
 func GetNeedBanner(slotID, groupID int) int {

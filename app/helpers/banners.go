@@ -1,6 +1,11 @@
 package helpers
 
 import (
+	"app/components"
+	"app/database"
+	"app/kafka"
+	"app/logger"
+	"app/models"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -9,11 +14,6 @@ import (
 	"strconv"
 	"strings"
 
-	"app/components"
-	"app/database"
-	"app/kafka"
-	"app/logger"
-	"app/models"
 	"github.com/gin-gonic/gin"
 )
 

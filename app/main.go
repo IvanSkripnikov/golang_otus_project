@@ -1,12 +1,11 @@
 package main
 
 import (
+	"app/controllers"
 	"fmt"
 	"net/http"
 	"regexp"
 	"strings"
-
-	"app/controllers"
 )
 
 type route struct {
@@ -95,5 +94,4 @@ func main() {
 		fatalMessage := fmt.Sprintf("Can't init http server, err: %v", err)
 		fmt.Println(fatalMessage)
 	}
-	return
 }
