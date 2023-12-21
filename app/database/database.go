@@ -26,7 +26,7 @@ func InitDataBase() *sql.DB {
 	}
 
 	host := "db"
-	host = "localhost"
+	// host = "localhost"
 	user := env("MYSQL_USER", "user")
 	pass := env("MYSQL_PASSWORD", "pass")
 	prot := env("MYSQL_PROT", "tcp")
