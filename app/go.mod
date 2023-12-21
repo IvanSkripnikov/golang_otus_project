@@ -1,4 +1,4 @@
-module github.com/IvanSkripnikov/golang_otus_project
+module app
 
 go 1.19
 
