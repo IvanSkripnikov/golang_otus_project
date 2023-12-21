@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"os"
 
-	"os"
-
 	"app/logger"
 	_ "github.com/go-sql-driver/mysql"
 )
