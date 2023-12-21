@@ -1,19 +1,20 @@
 package helpers
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+	"strconv"
+	"strings"
+
 	"app/components"
 	"app/database"
 	"app/kafka"
 	"app/logger"
 	"app/models"
-	"bytes"
-	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"log"
-	"net/http"
-	"strconv"
-	"strings"
 )
 
 func GetAllBanners(w http.ResponseWriter, r *http.Request) {

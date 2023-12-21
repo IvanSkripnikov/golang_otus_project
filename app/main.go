@@ -1,11 +1,12 @@
 package main
 
 import (
-	"app/controllers"
 	"fmt"
 	"net/http"
 	"regexp"
 	"strings"
+
+	"app/controllers"
 )
 
 type route struct {
