@@ -1,11 +1,11 @@
 package database
 
 import (
-	"app/logger"
 	"database/sql"
 	"fmt"
 	"os"
 
+	"app/logger"
 	_ "github.com/go-sql-driver/mysql"
 )
 

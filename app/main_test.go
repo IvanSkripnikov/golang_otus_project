@@ -1,15 +1,15 @@
 package main
 
 import (
+	"app/controllers"
+	"app/database"
+	"app/logger"
 	"context"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"app/controllers"
-	"app/database"
-	"app/logger"
 	"github.com/gavv/httpexpect/v2"
 )
 
@@ -19,6 +19,7 @@ func TestRoot(t *testing.T) {
 	w := httptest.NewRecorder()
 	controllers.HelloPageHandler(w, req)
 	res := w.Result()
+
 	defer res.Body.Close()
 
 	data, err := io.ReadAll(res.Body)
