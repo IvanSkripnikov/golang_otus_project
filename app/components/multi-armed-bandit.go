@@ -1,13 +1,12 @@
 package components
 
 import (
-	"fmt"
-	"math"
-	"sort"
-
 	"app/database"
 	"app/logger"
 	"app/models"
+	"fmt"
+	"math"
+	"sort"
 )
 
 func GetNeedBanner(slotID, groupID int) int {
@@ -31,13 +30,13 @@ func GetRating(averageRating float64, currentCount float64, allCounts float64) f
 	return averageRating + math.Sqrt((2*math.Log(allCounts))/currentCount)
 }
 
-func GetBannerRatings(bannersForSlot []int, groupId, slotId int) []models.Rating {
+func GetBannerRatings(bannersForSlot []int, groupID, slotID int) []models.Rating {
 	rateBanners := make([]models.Rating, len(bannersForSlot))
 
 	var averageRating, rate float64
 	for k, bannerID := range bannersForSlot {
-		allShowsBanner := float64(database.GetBannerEvents(bannerID, groupId, slotId, "show"))
-		allClickBanner := float64(database.GetBannerEvents(bannerID, groupId, slotId, "click"))
+		allShowsBanner := float64(database.GetBannerEvents(bannerID, groupID, slotID, "show"))
+		allClickBanner := float64(database.GetBannerEvents(bannerID, groupID, slotID, "click"))
 		allShows := float64(database.GetAllEvents("show"))
 
 		// находим средний рейтинг баннера

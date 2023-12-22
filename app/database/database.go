@@ -1,11 +1,11 @@
 package database
 
 import (
+	"app/logger"
 	"database/sql"
 	"fmt"
 	"os"
 
-	"app/logger"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -48,17 +48,20 @@ func InitDataBase() *sql.DB {
 
 func GetBannerEvents(bannerId, groupId, slotId int, eventType string) int {
 	query := "SELECT COUNT(*) as cnt from events WHERE banner_id = ? AND group_id = ? AND slot_id = ? AND type = ?"
-	stmt, err := DB.Query(query, bannerId, groupId, slotId, eventType)
+	rows, err := DB.Query(query, bannerId, groupId, slotId, eventType)
 	if err != nil {
 		return 0
 	}
 
-	defer stmt.Close()
+	defer func() {
+		_ = rows.Close()
+		_ = rows.Err()
+	}()
 
 	count := 0
 
-	for stmt.Next() {
-		if err := stmt.Scan(&count); err != nil {
+	for rows.Next() {
+		if err = rows.Scan(&count); err != nil {
 			return 0
 		}
 	}
@@ -73,7 +76,10 @@ func GetBannersForSlot(slotID int) ([]int, error) {
 		return nil, err
 	}
 
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+		_ = rows.Err()
+	}()
 
 	banners := make([]int, 0)
 	banner := 0
@@ -90,17 +96,20 @@ func GetBannersForSlot(slotID int) ([]int, error) {
 
 func GetAllEvents(eventType string) int {
 	query := "SELECT COUNT(*) from events WHERE type = ?"
-	stmt, err := DB.Query(query, eventType)
+	rows, err := DB.Query(query, eventType)
 	if err != nil {
 		return 0
 	}
 
-	defer stmt.Close()
+	defer func() {
+		_ = rows.Close()
+		_ = rows.Err()
+	}()
 
 	count := 0
 
-	for stmt.Next() {
-		if err := stmt.Scan(&count); err != nil {
+	for rows.Next() {
+		if err = rows.Scan(&count); err != nil {
 			return 0
 		}
 	}

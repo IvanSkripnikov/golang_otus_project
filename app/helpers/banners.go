@@ -19,13 +19,18 @@ import (
 
 func GetAllBanners(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	rows, err := database.DB.Query(fmt.Sprintf("SELECT * from %s", "banners"))
+
+	query := "SELECT * from banners"
+	rows, err := database.DB.Query(query)
 
 	if checkError(w, err) {
 		return
 	}
 
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+		_ = rows.Err()
+	}()
 
 	var banners []models.Banner
 	for rows.Next() {
