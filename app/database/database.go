@@ -46,9 +46,9 @@ func InitDataBase() *sql.DB {
 	return db
 }
 
-func GetBannerEvents(bannerId, groupId, slotId int, eventType string) int {
+func GetBannerEvents(bannerID, groupID, slotID int, eventType string) int {
 	query := "SELECT COUNT(*) as cnt from events WHERE banner_id = ? AND group_id = ? AND slot_id = ? AND type = ?"
-	rows, err := DB.Query(query, bannerId, groupId, slotId, eventType)
+	rows, err := DB.Query(query, bannerID, groupID, slotID, eventType)
 	if err != nil {
 		return 0
 	}

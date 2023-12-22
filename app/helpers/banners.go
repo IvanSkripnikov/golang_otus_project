@@ -62,7 +62,8 @@ func GetBanner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stmt, err := database.DB.Prepare(fmt.Sprintf("SELECT * from %s WHERE id = ?", "banners"))
+	query := "SELECT * from banners WHERE id = ?"
+	stmt, err := database.DB.Prepare(query)
 
 	if checkError(w, err) {
 		return
@@ -101,20 +102,17 @@ func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query := fmt.Sprintf("INSERT INTO %s (banner_id, slot_id) VALUES (?, ?)", "relations_banner_slot")
-	stmt, err := database.DB.Prepare(query)
+	query := "INSERT INTO relations_banner_slot (banner_id, slot_id) VALUES (?, ?)"
+	rows, err := database.DB.Query(query, bannerID, slotID)
 
 	if checkError(w, err) {
 		return
 	}
 
-	defer stmt.Close()
-
-	_, err = stmt.Exec(bannerID, slotID)
-
-	if checkError(w, err) {
-		return
-	}
+	defer func() {
+		_ = rows.Close()
+		_ = rows.Err()
+	}()
 
 	writeSuccess(w, "{\"message\": \"Successfully added!\"}")
 }
@@ -133,19 +131,16 @@ func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := "DELETE FROM relations_banner_slot WHERE banner_id=? AND slot_id=?"
-	stmt, err := database.DB.Prepare(query)
+	rows, err := database.DB.Query(query, bannerID, slotID)
 
 	if checkError(w, err) {
 		return
 	}
 
-	defer stmt.Close()
-
-	_, err = stmt.Exec(bannerID, slotID)
-
-	if checkError(w, err) {
-		return
-	}
+	defer func() {
+		_ = rows.Close()
+		_ = rows.Err()
+	}()
 
 	writeSuccess(w, "{\"message\": \"Successfully removed!\"}")
 }
@@ -164,26 +159,25 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// получаем id баннера
-	bannerId := components.GetNeedBanner(slotID, groupID)
+	bannerID := components.GetNeedBanner(slotID, groupID)
 
 	// записываем событие просмотра
-	query := fmt.Sprintf("INSERT INTO %s (`type`, `banner_id`, `slot_id`, `group_id`) VALUES (?, ?, ?, ?)", "events")
-	stmt, err := database.DB.Prepare(query)
+	query := "INSERT INTO events (`type`, `banner_id`, `slot_id`, `group_id`) VALUES (?, ?, ?, ?)"
+	rows, err := database.DB.Query(query, "show", bannerID, slotID, groupID)
 
 	if checkError(w, err) {
 		return
 	}
-	defer stmt.Close()
 
-	_, err = stmt.Exec("show", bannerId, slotID, groupID)
+	defer func() {
+		_ = rows.Close()
+		_ = rows.Err()
+	}()
 
-	if checkError(w, err) {
-		return
-	}
 	// отправляем событие в кафку
 	// sendEventToKafka("click", bannerId, slotId, groupId)
 
-	_, err = fmt.Fprint(w, strconv.Itoa(bannerId))
+	_, err = fmt.Fprint(w, strconv.Itoa(bannerID))
 	if err != nil {
 		logger.SendToErrorLog(err.Error())
 		return
@@ -205,22 +199,19 @@ func EventClick(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := "INSERT INTO events (type, banner_id, slot_id, group_id) VALUES (?, ?, ?, ?)"
-	stmt, err := database.DB.Prepare(query)
+	rows, err := database.DB.Query(query, "click", bannerID, slotID, groupID)
 
 	// отправляем событие в кафку
-	// sendEventToKafka("click", bannerId, slotId, groupId)
+	// sendEventToKafka("click", bannerID, slotID, groupID)
 
 	if checkError(w, err) {
 		return
 	}
 
-	defer stmt.Close()
-
-	_, err = stmt.Exec("click", bannerID, slotID, groupID)
-
-	if checkError(w, err) {
-		return
-	}
+	defer func() {
+		_ = rows.Close()
+		_ = rows.Err()
+	}()
 
 	fmt.Fprint(w, r)
 }
