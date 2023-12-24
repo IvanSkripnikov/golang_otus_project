@@ -25,14 +25,13 @@ var routes = []route{
 	newRoute("POST", "/event_click/([\\S]+)", controllers.ClickHandler),
 }
 
-func initHTTPServer() error {
+func initHTTPServer() {
 	http.HandleFunc("/", Serve)
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		errMessage := fmt.Sprintf("Can't init HTTP server: %v", err)
 		fmt.Println(errMessage)
 	}
-	return nil
 }
 
 func newRoute(method, pattern string, handler http.HandlerFunc) route {
@@ -91,8 +90,5 @@ func handleRegexp(regExp *regexp.Regexp) string {
 }
 
 func main() {
-	if err := initHTTPServer(); err != nil {
-		fatalMessage := fmt.Sprintf("Can't init http server, err: %v", err)
-		fmt.Println(fatalMessage)
-	}
+	initHTTPServer()
 }

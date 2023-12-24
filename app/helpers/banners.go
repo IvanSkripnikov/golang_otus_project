@@ -16,7 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetAllBanners(w http.ResponseWriter, r *http.Request) {
+func GetAllBanners(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	query := "SELECT * from banners"

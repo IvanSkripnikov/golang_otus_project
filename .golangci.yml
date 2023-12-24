@@ -16,6 +16,7 @@ linters-settings:
           - database/sql
           - encoding/json
           - errors
+          - flag
           - fmt
           - github.com/github.com/go-sql-driver/mysql
           - github.com/IvanSkripnikov/golang_otus_project/components
@@ -26,6 +27,7 @@ linters-settings:
           - github.com/IvanSkripnikov/golang_otus_project/logger
           - github.com/IvanSkripnikov/golang_otus_project/models
           - io
+          - log
           - math
           - net/http
           - os
