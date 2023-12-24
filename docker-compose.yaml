@@ -8,12 +8,10 @@ services:
     container_name: api
     env_file:
       - .env
-#    depends_on:
-#      - kafka
-#    networks:
-#      - kafka-network
+    networks:
+      - rabbitmq_go_net
     ports:
-      - "8080:8080"
+      - 8080:8080
     stdin_open: true
     tty: true
     volumes:
@@ -29,10 +27,10 @@ services:
     env_file:
       - .env
     ports:
-      - "3306:3306"
+      - 3306:3306
     restart: always
-#    networks:
-#      - kafka-network
+    networks:
+      - rabbitmq_go_net
     volumes:
       - type: volume
         source: db-data9
@@ -40,30 +38,21 @@ services:
         volume:
           nocopy: true
 
-#  zookeeper:
-#    image: confluentinc/cp-zookeeper:latest
-#    environment:
-#      - ZOOKEEPER_CLIENT_PORT=2181
-#    networks:
-#      - kafka-network
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - rabbitmq_go_net
 
-#  kafka:
-#    image: confluentinc/cp-kafka:latest
-#    ports:
-#      - "9092:9092"
-#    hostname: kafka
-#    depends_on:
-#      - zookeeper
-#    environment:
-#      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-#      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-#      - container_name=kafka
-#    networks:
-#      - kafka-network
-
-#networks:
-#  kafka-network:
-#    driver: bridge
+networks:
+  rabbitmq_go_net:
+    driver: bridge
 
 volumes:
   db-data9:

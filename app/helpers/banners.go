@@ -10,10 +10,9 @@ import (
 
 	"github.com/IvanSkripnikov/golang_otus_project/components"
 	"github.com/IvanSkripnikov/golang_otus_project/database"
-	"github.com/IvanSkripnikov/golang_otus_project/kafka"
 	"github.com/IvanSkripnikov/golang_otus_project/logger"
 	"github.com/IvanSkripnikov/golang_otus_project/models"
-	"github.com/gin-gonic/gin"
+	"github.com/IvanSkripnikov/golang_otus_project/queue"
 )
 
 func GetAllBanners(w http.ResponseWriter, _ *http.Request) {
@@ -175,7 +174,7 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	// отправляем событие в кафку
-	// sendEventToKafka("click", bannerID, slotID, groupID)
+	queue.SendEventToQueue("click", bannerID, slotID, groupID)
 
 	_, err = fmt.Fprint(w, strconv.Itoa(bannerID))
 	if err != nil {
@@ -202,7 +201,7 @@ func EventClick(w http.ResponseWriter, r *http.Request) {
 	rows, err := database.DB.Query(query, "click", bannerID, slotID, groupID)
 
 	// отправляем событие в кафку
-	// sendEventToKafka("click", bannerID, slotID, groupID)
+	queue.SendEventToQueue("click", bannerID, slotID, groupID)
 
 	if checkError(w, err) {
 		return
@@ -274,49 +273,3 @@ func getParamsFromQueryString(url string) (map[string]int, string) {
 
 	return resultMap, outMessage
 }
-
-func sendEventToKafka(eventName string, bannerID, slotID, groupID int) {
-	message := kafka.Message{Type: eventName, BannerID: bannerID, SlotID: slotID, GroupID: groupID}
-
-	producer, err := kafka.SetupProducer()
-	if err != nil {
-		logger.SendToFatalLog(fmt.Sprintf("failed to initialize producer: %v", err))
-	}
-	defer producer.Close()
-
-	gin.SetMode(gin.ReleaseMode)
-	router := gin.Default()
-	router.POST("/send", kafka.SendMessageHandler(producer, message))
-
-	fmt.Printf("Kafka PRODUCER 📨 started at http://localhost%s\n", kafka.ProducerPort)
-
-	if err = router.Run(kafka.ProducerPort); err != nil {
-		logger.SendToErrorLog(fmt.Sprintf("failed to run the server: %v", err))
-	}
-}
-
-/*
-func executeQuery(w http.ResponseWriter, query string, ids ...int) bool {
-	stmt, err := database.Db.Prepare(query)
-
-	if err != nil {
-		log.Println(err.Error())
-		fmt.Fprint(w, err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-		return false
-	}
-
-	defer stmt.Close()
-
-	_, err = stmt.Exec("click", pq.Array(ids))
-
-	if err != nil {
-		log.Println(err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, err)
-		return false
-	}
-
-	return true
-}
-*/

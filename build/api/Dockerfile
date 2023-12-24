@@ -9,7 +9,7 @@ RUN apk update && \
 ADD ./app /go/src/app
 
 RUN cd /go/src/app && \
-    go install app
+    go install github.com/IvanSkripnikov/golang_otus_project
 
 ENTRYPOINT ["/go/bin/app"]
 

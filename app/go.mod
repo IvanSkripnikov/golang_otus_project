@@ -7,8 +7,7 @@ require (
 	github.com/gavv/httpexpect/v2 v2.16.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-sql-driver/mysql v1.6.0
-	github.com/sirupsen/logrus v1.9.3
-	github.com/t-tomalak/logrus-easy-formatter v0.0.0-20190827215021-c074f06c5816
+	github.com/streadway/amqp v1.1.0
 )
 
 require (
