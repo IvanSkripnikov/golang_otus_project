@@ -62,15 +62,16 @@ func GetBanner(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := "SELECT * from banners WHERE id = ?"
-	stmt, err := database.DB.Prepare(query)
+	rows, err := database.DB.Prepare(query)
 
 	if checkError(w, err) {
 		return
 	}
 
-	defer stmt.Close()
+	defer rows.Close()
 
-	if err = stmt.QueryRow(banner.ID).Scan(&banner.ID, &banner.Title, &banner.Body, &banner.CreatedAt, &banner.Active); err != nil {
+	err = rows.QueryRow(banner.ID).Scan(&banner.ID, &banner.Title, &banner.Body, &banner.CreatedAt, &banner.Active)
+	if err != nil {
 		logger.SendToErrorLog(err.Error())
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprint(w, "{ \"message\": \"Not Found\"}")
@@ -266,9 +267,9 @@ func getParamsFromQueryString(url string) (map[string]int, string) {
 		if len(pair) == 1 {
 			outMessage = "incorrect params value: " + v
 			return resultMap, outMessage
-		} else {
-			resultMap[pair[0]], _ = strconv.Atoi(pair[1])
 		}
+
+		resultMap[pair[0]], _ = strconv.Atoi(pair[1])
 	}
 
 	return resultMap, outMessage

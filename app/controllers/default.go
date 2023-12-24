@@ -2,8 +2,9 @@ package controllers
 
 import (
 	"fmt"
-	"log"
 	"net/http"
+
+	"github.com/IvanSkripnikov/golang_otus_project/logger"
 )
 
 func HelloPageHandler(w http.ResponseWriter, r *http.Request) {
@@ -13,7 +14,7 @@ func HelloPageHandler(w http.ResponseWriter, r *http.Request) {
 	case "GET":
 		_, err := fmt.Fprint(w, "{\"message\": \"Hello dear friend! Welcome!\"}")
 		if err != nil {
-			log.Println(err.Error())
+			logger.SendToErrorLog(err.Error())
 			return
 		}
 		w.WriteHeader(http.StatusOK)

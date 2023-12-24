@@ -17,6 +17,7 @@ linters-settings:
           - encoding/json
           - errors
           - fmt
+          - github.com/github.com/go-sql-driver/mysql
           - github.com/IvanSkripnikov/golang_otus_project/components
           - github.com/IvanSkripnikov/golang_otus_project/controllers
           - github.com/IvanSkripnikov/golang_otus_project/database
@@ -32,6 +33,7 @@ linters-settings:
           - sort
           - strconv
           - strings
+          - testing
 
 issues:
   exclude-rules:
