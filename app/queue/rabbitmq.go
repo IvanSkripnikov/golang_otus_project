@@ -48,7 +48,7 @@ func SendEventToQueue(eventName string, bannerID, slotID, groupID int) {
 		false,
 		amqp.Publishing{
 			ContentType: "text/plain",
-			Body:        []byte(body),
+			Body:        body,
 		})
 	failOnError(err, "Failed to publish a message")
 	logger.SendToInfoLog(fmt.Sprintf("[x] Congrats, sending message: %s", body))
