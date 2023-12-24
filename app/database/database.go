@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/IvanSkripnikov/golang_otus_project/logger"
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql" // nolint:nolintlint
 )
 
 var DB *sql.DB
