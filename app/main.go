@@ -65,7 +65,7 @@ func Serve(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetHttpHandler() *http.ServeMux {
+func GetHTTPHandler() *http.ServeMux {
 	httpHandler := http.NewServeMux()
 
 	for _, route := range routes {

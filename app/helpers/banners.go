@@ -55,7 +55,7 @@ func GetAllBanners(w http.ResponseWriter, r *http.Request) {
 
 func GetBanner(w http.ResponseWriter, r *http.Request) {
 	var banner models.Banner
-	banner.ID, _ = getIdFromRequestString(r.URL.Path)
+	banner.ID, _ = getIDFromRequestString(r.URL.Path)
 
 	if banner.ID == 0 {
 		wrongParamsResponse(w)
@@ -245,7 +245,7 @@ func wrongParamsResponse(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusBadRequest)
 }
 
-func getIdFromRequestString(url string) (int, error) {
+func getIDFromRequestString(url string) (int, error) {
 	vars := strings.Split(url, "/")
 
 	return strconv.Atoi(vars[len(vars)-1])

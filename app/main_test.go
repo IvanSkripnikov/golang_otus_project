@@ -32,7 +32,7 @@ func TestRoot(t *testing.T) {
 }
 
 func TestBanner(t *testing.T) {
-	handler := GetHttpHandler()
+	handler := GetHTTPHandler()
 
 	server := httptest.NewServer(handler)
 	defer server.Close()
@@ -45,7 +45,7 @@ func TestBanner(t *testing.T) {
 }
 
 func TestBanners(t *testing.T) {
-	handler := GetHttpHandler()
+	handler := GetHTTPHandler()
 
 	server := httptest.NewServer(handler)
 	defer server.Close()
@@ -59,7 +59,7 @@ func TestBanners(t *testing.T) {
 
 func TestGetBannerForShow(t *testing.T) {
 	countBefore := database.GetAllEvents("show")
-	handler := GetHttpHandler()
+	handler := GetHTTPHandler()
 
 	server := httptest.NewServer(handler)
 	defer server.Close()
@@ -80,7 +80,7 @@ func TestGetBannerForShow(t *testing.T) {
 func TestEventClick(t *testing.T) {
 	countBefore := database.GetAllEvents("click")
 
-	handler := GetHttpHandler()
+	handler := GetHTTPHandler()
 	server := httptest.NewServer(handler)
 	defer server.Close()
 
@@ -98,7 +98,7 @@ func TestEventClick(t *testing.T) {
 }
 
 func TestRemoveBanner(t *testing.T) {
-	handler := GetHttpHandler()
+	handler := GetHTTPHandler()
 	server := httptest.NewServer(handler)
 	defer server.Close()
 
@@ -117,7 +117,7 @@ func TestRemoveBanner(t *testing.T) {
 }
 
 func TestAddBanner(t *testing.T) {
-	handler := GetHttpHandler()
+	handler := GetHTTPHandler()
 	server := httptest.NewServer(handler)
 	defer server.Close()
 

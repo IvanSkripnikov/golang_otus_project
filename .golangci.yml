@@ -12,8 +12,11 @@ linters-settings:
         # List of allowed packages.
         allow:
           - bytes
+          - database/sql
           - encoding/json
           - errors
+          - github.com/IvanSkripnikov/golang_otus_project/components
+          - github.com/IvanSkripnikov/golang_otus_project/controllers
           - github.com/IvanSkripnikov/golang_otus_project/database
           - github.com/IvanSkripnikov/golang_otus_project/kafka
           - github.com/IvanSkripnikov/golang_otus_project/logger
