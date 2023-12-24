@@ -18,6 +18,7 @@ linters-settings:
           - errors
           - flag
           - fmt
+          - github.com/gavv/httpexpect/v2
           - github.com/github.com/go-sql-driver/mysql
           - github.com/IvanSkripnikov/golang_otus_project/components
           - github.com/IvanSkripnikov/golang_otus_project/controllers
@@ -26,6 +27,8 @@ linters-settings:
           - github.com/IvanSkripnikov/golang_otus_project/kafka
           - github.com/IvanSkripnikov/golang_otus_project/logger
           - github.com/IvanSkripnikov/golang_otus_project/models
+          - github.com/IvanSkripnikov/golang_otus_project/queue
+          - github.com/streadway/amqp
           - io
           - log
           - math
