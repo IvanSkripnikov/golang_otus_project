@@ -11,7 +11,7 @@ func HelloPageHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	switch r.Method {
-	case "GET":
+	case http.MethodGet:
 		_, err := fmt.Fprint(w, "{\"message\": \"Hello dear friend! Welcome!\"}")
 		if err != nil {
 			logger.SendToErrorLog(err.Error())

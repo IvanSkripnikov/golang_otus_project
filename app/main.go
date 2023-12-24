@@ -27,7 +27,7 @@ var routes = []route{
 
 func initHTTPServer() {
 	http.HandleFunc("/", Serve)
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":8080", nil) //nolint:gosec
 	if err != nil {
 		errMessage := fmt.Sprintf("Can't init HTTP server: %v", err)
 		fmt.Println(errMessage)

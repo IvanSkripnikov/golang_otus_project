@@ -42,6 +42,12 @@ func TestBanner(t *testing.T) {
 	e.GET("/banners/1").
 		Expect().
 		Status(http.StatusOK).JSON().IsObject()
+
+	e.POST("/banners/1").Expect().Status(http.StatusMethodNotAllowed)
+	e.PUT("/banners/1").Expect().Status(http.StatusMethodNotAllowed)
+	e.PATCH("/banners/1").Expect().Status(http.StatusMethodNotAllowed)
+	e.DELETE("/banners/1").Expect().Status(http.StatusMethodNotAllowed)
+	e.HEAD("/banners/1").Expect().Status(http.StatusMethodNotAllowed)
 }
 
 func TestBanners(t *testing.T) {
@@ -55,6 +61,12 @@ func TestBanners(t *testing.T) {
 	e.GET("/banners").
 		Expect().
 		Status(http.StatusOK).JSON().Array().NotEmpty()
+
+	e.POST("/banners").Expect().Status(http.StatusMethodNotAllowed)
+	e.PUT("/banners").Expect().Status(http.StatusMethodNotAllowed)
+	e.PATCH("/banners").Expect().Status(http.StatusMethodNotAllowed)
+	e.DELETE("/banners").Expect().Status(http.StatusMethodNotAllowed)
+	e.HEAD("/banners").Expect().Status(http.StatusMethodNotAllowed)
 }
 
 func TestGetBannerForShow(t *testing.T) {
@@ -68,13 +80,19 @@ func TestGetBannerForShow(t *testing.T) {
 
 	e.GET("/get_banner_for_show/slot=1&group=1").
 		Expect().
-		Status(http.StatusOK).Raw()
+		Status(http.StatusOK).JSON()
 
 	countAfter := database.GetAllEvents("show")
 
 	if countBefore+1 != countAfter {
 		t.Errorf("Not increment banner shows!")
 	}
+
+	e.POST("/get_banner_for_show/slot=1&group=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.PUT("/get_banner_for_show/slot=1&group=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.PATCH("/get_banner_for_show/slot=1&group=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.DELETE("/get_banner_for_show/slot=1&group=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.HEAD("/get_banner_for_show/slot=1&group=1").Expect().Status(http.StatusMethodNotAllowed)
 }
 
 func TestEventClick(t *testing.T) {
@@ -88,13 +106,19 @@ func TestEventClick(t *testing.T) {
 
 	e.POST("/event_click/slot=1&group=1&banner=1").
 		Expect().
-		Status(http.StatusOK).Raw()
+		Status(http.StatusOK)
 
 	countAfter := database.GetAllEvents("click")
 
 	if countBefore+1 != countAfter {
 		t.Errorf("Not increment banner shows!")
 	}
+
+	e.GET("/event_click/slot=1&group=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.PUT("/event_click/slot=1&group=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.PATCH("/event_click/slot=1&group=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.DELETE("/event_click/slot=1&group=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.HEAD("/event_click/slot=1&group=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
 }
 
 func TestRemoveBanner(t *testing.T) {
@@ -113,7 +137,13 @@ func TestRemoveBanner(t *testing.T) {
 
 	e.POST("/remove_banner_from_slot/slot=1&banner=1").
 		Expect().
-		Status(http.StatusOK).Raw()
+		Status(http.StatusOK).JSON()
+
+	e.GET("/remove_banner_from_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.PUT("/remove_banner_from_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.PATCH("/remove_banner_from_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.DELETE("/remove_banner_from_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.HEAD("/remove_banner_from_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
 }
 
 func TestAddBanner(t *testing.T) {
@@ -125,5 +155,11 @@ func TestAddBanner(t *testing.T) {
 
 	e.POST("/add_banner_to_slot/slot=1&banner=1").
 		Expect().
-		Status(http.StatusOK).Raw()
+		Status(http.StatusOK).JSON()
+
+	e.GET("/add_banner_to_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.PUT("/add_banner_to_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.PATCH("/add_banner_to_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.DELETE("/add_banner_to_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.HEAD("/add_banner_to_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
 }
