@@ -3,59 +3,65 @@ package logger
 import (
 	"flag"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"strconv"
 	"strings"
-
-	"github.com/sirupsen/logrus"
-	easy "github.com/t-tomalak/logrus-easy-formatter"
 )
 
-const serviceNameDefault = "banner-rotation"
+const (
+	serviceNameDefault = "banner-rotation"
 
-var errorLevels = map[logrus.Level]string{
-	logrus.PanicLevel: "panic",
-	logrus.FatalLevel: "fatal",
-	logrus.ErrorLevel: "error",
-	logrus.WarnLevel:  "warning",
-	logrus.InfoLevel:  "info",
-	logrus.DebugLevel: "debug",
-	logrus.TraceLevel: "trace",
+	panicLevel = 0
+	fatalLevel = 1
+	errorLevel = 2
+	warnLevel  = 3
+	infoLevel  = 4
+	debugLevel = 5
+	traceLevel = 6
+)
+
+var errorLevels = map[int]string{
+	panicLevel: "panic",
+	fatalLevel: "fatal",
+	errorLevel: "error",
+	warnLevel:  "warning",
+	infoLevel:  "info",
+	debugLevel: "debug",
+	traceLevel: "trace",
 }
 
 func SendToPanicLog(message string) {
-	pushLogger(message, logrus.PanicLevel)
+	pushLogger(message, panicLevel)
 	os.Exit(1)
 }
 
 func SendToFatalLog(message string) {
-	pushLogger(message, logrus.FatalLevel)
+	pushLogger(message, fatalLevel)
 	os.Exit(1)
 }
 
 func SendToErrorLog(message string) {
-	pushLogger(message, logrus.ErrorLevel)
+	pushLogger(message, errorLevel)
 }
 
 func SendToWarningLog(message string) {
-	pushLogger(message, logrus.WarnLevel)
+	pushLogger(message, warnLevel)
 }
 
 func SendToInfoLog(message string) {
-	pushLogger(message, logrus.InfoLevel)
+	pushLogger(message, infoLevel)
 }
 
 func SendToDebugLog(message string) {
-	pushLogger(message, logrus.DebugLevel)
+	pushLogger(message, debugLevel)
 }
 
 func SendToTraceLog(message string) {
-	pushLogger(message, logrus.TraceLevel)
+	pushLogger(message, traceLevel)
 }
 
-func pushLogger(message string, currentLevel logrus.Level) {
+func pushLogger(message string, currentLevel int) {
 	configLogLevel := os.Getenv("LOG_LEVEL")
 
 	if len(configLogLevel) == 0 {
@@ -63,12 +69,12 @@ func pushLogger(message string, currentLevel logrus.Level) {
 	}
 
 	levelValue, errLevel := strconv.Atoi(configLogLevel)
-	var logLevel logrus.Level
+	var logLevel int
 
 	if errLevel != nil {
 		log.Println(errLevel)
 	} else {
-		logLevel = logrus.Level(levelValue)
+		logLevel = levelValue
 	}
 
 	if currentLevel > logLevel {
@@ -81,20 +87,15 @@ func pushLogger(message string, currentLevel logrus.Level) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer logFile.Close()
-
-	logger := &logrus.Logger{
-		Out:   io.MultiWriter(os.Stdout, logFile),
-		Level: logrus.TraceLevel,
-		Formatter: &easy.Formatter{
-			TimestampFormat: "2006-01-02 15:04:05.000",
-			LogFormat:       "[%time%] %msg%",
-		},
-	}
+	defer func(logFile *os.File) {
+		err := logFile.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(logFile)
 
 	levelMessage := errorLevels[currentLevel]
-	logger.Printf("[%s] [%s] [%s] %s \n",
-		getHostName(), serviceNameDefault, levelMessage, message)
+	fmt.Printf("[%s] [%s] [%s] %s \n", getHostName(), serviceNameDefault, levelMessage, message)
 }
 
 func getLogFilePath() string {
