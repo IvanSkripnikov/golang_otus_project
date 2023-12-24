@@ -78,7 +78,7 @@ func GetHTTPHandler() *http.ServeMux {
 func handleRegexp(regExp *regexp.Regexp) string {
 	expr := regExp.String()[1 : len(regExp.String())-1]
 
-	result := ""
+	var result string
 	if strings.Count(expr, "/") > 1 {
 		parts := strings.Split(expr, "/")
 		parts = parts[:len(parts)-1]

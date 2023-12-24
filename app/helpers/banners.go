@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -36,7 +35,7 @@ func GetAllBanners(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		banner := models.Banner{}
 		if err = rows.Scan(&banner.ID, &banner.Title, &banner.Body, &banner.CreatedAt, &banner.Active); err != nil {
-			log.Println(err.Error())
+			logger.SendToErrorLog(err.Error())
 			continue
 		}
 		banners = append(banners, banner)
@@ -72,7 +71,7 @@ func GetBanner(w http.ResponseWriter, r *http.Request) {
 	defer stmt.Close()
 
 	if err = stmt.QueryRow(banner.ID).Scan(&banner.ID, &banner.Title, &banner.Body, &banner.CreatedAt, &banner.Active); err != nil {
-		log.Println(err.Error())
+		logger.SendToErrorLog(err.Error())
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprint(w, "{ \"message\": \"Not Found\"}")
 		return
@@ -175,7 +174,7 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	// отправляем событие в кафку
-	// sendEventToKafka("click", bannerId, slotId, groupId)
+	// sendEventToKafka("click", bannerID, slotID, groupID)
 
 	_, err = fmt.Fprint(w, strconv.Itoa(bannerID))
 	if err != nil {
@@ -220,7 +219,7 @@ func EventClick(w http.ResponseWriter, r *http.Request) {
 
 func checkError(w http.ResponseWriter, err error) bool {
 	if err != nil {
-		log.Println(err.Error())
+		logger.SendToErrorLog(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprint(w, err)
 		return true
@@ -233,14 +232,13 @@ func writeSuccess(w http.ResponseWriter, message string) {
 	w.WriteHeader(http.StatusOK)
 	_, err := fmt.Fprint(w, message)
 	if err != nil {
-		log.Println(err.Error())
+		logger.SendToErrorLog(fmt.Sprintf("write success error %s", err.Error()))
 		return
 	}
 }
 
 func wrongParamsResponse(w http.ResponseWriter) {
 	resultString := "{\"message\": \"Invalid request GetHandler\"}"
-	log.Println(resultString)
 	fmt.Fprint(w, resultString)
 	w.WriteHeader(http.StatusBadRequest)
 }
@@ -281,7 +279,7 @@ func sendEventToKafka(eventName string, bannerID, slotID, groupID int) {
 
 	producer, err := kafka.SetupProducer()
 	if err != nil {
-		log.Fatalf("failed to initialize producer: %v", err)
+		logger.SendToFatalLog(fmt.Sprintf("failed to initialize producer: %v", err))
 	}
 	defer producer.Close()
 
@@ -291,8 +289,8 @@ func sendEventToKafka(eventName string, bannerID, slotID, groupID int) {
 
 	fmt.Printf("Kafka PRODUCER 📨 started at http://localhost%s\n", kafka.ProducerPort)
 
-	if err := router.Run(kafka.ProducerPort); err != nil {
-		log.Printf("failed to run the server: %v", err)
+	if err = router.Run(kafka.ProducerPort); err != nil {
+		logger.SendToErrorLog(fmt.Sprintf("failed to run the server: %v", err))
 	}
 }
 

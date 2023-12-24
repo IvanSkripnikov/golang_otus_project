@@ -11,7 +11,7 @@ import (
 )
 
 func GetNeedBanner(slotID, groupID int) int {
-	resultBannerID := 0
+	var resultBannerID int
 
 	// находим баннеры для данного слота
 	bannersForSlot, err := database.GetBannersForSlot(slotID)

@@ -3,9 +3,10 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"os"
+
 	"github.com/IvanSkripnikov/golang_otus_project/logger"
 	_ "github.com/go-sql-driver/mysql"
-	"os"
 )
 
 var DB *sql.DB
@@ -25,8 +26,8 @@ func InitDataBase() *sql.DB {
 		return defaultValue
 	}
 
-	host := "db"
-	host = "localhost"
+	// host := "db"
+	host := "localhost"
 	user := env("MYSQL_USER", "user")
 	pass := env("MYSQL_PASSWORD", "pass")
 	prot := env("MYSQL_PROT", "tcp")
