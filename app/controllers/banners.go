@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 
-	"app/helpers"
+	"github.com/IvanSkripnikov/golang_otus_project/helpers"
 )
 
 const (

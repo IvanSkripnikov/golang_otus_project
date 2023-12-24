@@ -1,15 +1,15 @@
 package main
 
 import (
-	"app/controllers"
-	"app/database"
-	"app/logger"
 	"context"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/IvanSkripnikov/golang_otus_project/controllers"
+	"github.com/IvanSkripnikov/golang_otus_project/database"
+	"github.com/IvanSkripnikov/golang_otus_project/logger"
 	"github.com/gavv/httpexpect/v2"
 )
 

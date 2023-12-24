@@ -3,10 +3,9 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"os"
-
-	"app/logger"
+	"github.com/IvanSkripnikov/golang_otus_project/logger"
 	_ "github.com/go-sql-driver/mysql"
+	"os"
 )
 
 var DB *sql.DB

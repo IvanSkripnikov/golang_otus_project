@@ -9,11 +9,11 @@ import (
 	"strconv"
 	"strings"
 
-	"app/components"
-	"app/database"
-	"app/kafka"
-	"app/logger"
-	"app/models"
+	"github.com/IvanSkripnikov/golang_otus_project/components"
+	"github.com/IvanSkripnikov/golang_otus_project/database"
+	"github.com/IvanSkripnikov/golang_otus_project/kafka"
+	"github.com/IvanSkripnikov/golang_otus_project/logger"
+	"github.com/IvanSkripnikov/golang_otus_project/models"
 	"github.com/gin-gonic/gin"
 )
 

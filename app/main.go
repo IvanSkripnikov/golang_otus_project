@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"app/controllers"
+	"github.com/IvanSkripnikov/golang_otus_project/controllers"
 )
 
 type route struct {

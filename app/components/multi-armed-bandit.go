@@ -5,9 +5,9 @@ import (
 	"math"
 	"sort"
 
-	"app/database"
-	"app/logger"
-	"app/models"
+	"github.com/IvanSkripnikov/golang_otus_project/database"
+	"github.com/IvanSkripnikov/golang_otus_project/logger"
+	"github.com/IvanSkripnikov/golang_otus_project/models"
 )
 
 func GetNeedBanner(slotID, groupID int) int {

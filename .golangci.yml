@@ -6,6 +6,25 @@ linters-settings:
     lines: 150
     statements: 80
 
+  depguard:
+    rules:
+      main:
+        # List of allowed packages.
+        allow:
+          - bytes
+          - encoding/json
+          - errors
+          - github.com/IvanSkripnikov/golang_otus_project/database
+          - github.com/IvanSkripnikov/golang_otus_project/kafka
+          - github.com/IvanSkripnikov/golang_otus_project/logger
+          - github.com/IvanSkripnikov/golang_otus_project/models
+          - math
+          - net/http
+          - os
+          - sort
+          - strconv
+          - strings
+
 issues:
   exclude-rules:
     - path: _test\.go
