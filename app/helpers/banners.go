@@ -174,7 +174,7 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	// отправляем событие в кафку
-	queue.SendEventToQueue("click", bannerID, slotID, groupID)
+	queue.SendEventToQueue("show", bannerID, slotID, groupID)
 
 	_, err = fmt.Fprint(w, strconv.Itoa(bannerID))
 	if err != nil {
