@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"database/sql"
-	"github.com/IvanSkripnikov/golang_otus_project/database"
 	"net/http"
 
+	"github.com/IvanSkripnikov/golang_otus_project/database"
 	"github.com/IvanSkripnikov/golang_otus_project/helpers"
 )
 

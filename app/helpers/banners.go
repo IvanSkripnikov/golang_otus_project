@@ -161,7 +161,7 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	bannerID := components.GetNeedBanner(slotID, groupID)
 
 	// записываем событие просмотра
-	query := "INSERT INTO events (`type`, `banner_id`, `slot_id`, `group_id`) VALUES (?, ?, ?, ?)"
+	query := "INSERT INTO events (type, banner_id, slot_id, group_id) VALUES (?, ?, ?, ?)"
 	rows, err := db.Query(query, "show", bannerID, slotID, groupID)
 
 	if checkError(w, err) {

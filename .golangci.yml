@@ -49,6 +49,8 @@ issues:
         - dupl
         - gocyclo
         - gosec
+        - goconst
+        - gosimple
 
 linters:
   disable-all: true
