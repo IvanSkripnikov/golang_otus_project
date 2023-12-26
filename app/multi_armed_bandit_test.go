@@ -70,7 +70,7 @@ func TestGetBannersForSlot(t *testing.T) {
 	mock.ExpectQuery(str).WithArgs(1)
 
 	components.SetDatabase(db)
-	_, err = components.GetBannersForSlot(1)
+	_, _ = components.GetBannersForSlot(1)
 
 	if err = mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expectations: %s", err)
