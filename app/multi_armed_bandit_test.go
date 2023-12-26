@@ -27,7 +27,9 @@ func TestGetAllEvents(t *testing.T) {
 	}
 	defer db.Close()
 
-	mock.ExpectQuery("SELECT (.+) from events WHERE type =").WithArgs("show")
+	var str string
+	str = "SELECT (.+) from events WHERE type ="
+	mock.ExpectQuery(str).WithArgs("show")
 
 	components.SetDatabase(db)
 	_ = components.GetAllEvents("show")
@@ -44,7 +46,9 @@ func TestGetBannerEvents(t *testing.T) {
 	}
 	defer db.Close()
 
-	mock.ExpectQuery("SELECT (.+) as cnt from events WHERE banner_id = (.+) AND group_id = (.+) AND slot_id = (.+) AND type = (.+)").WithArgs(1, 1, 1, "show")
+	var str string
+	str = "SELECT (.+) as cnt from events WHERE banner_id = (.+) AND group_id = (.+) AND slot_id = (.+) AND type = (.+)"
+	mock.ExpectQuery(str).WithArgs(1, 1, 1, "show")
 
 	components.SetDatabase(db)
 	_ = components.GetBannerEvents(1, 1, 1, "show")
@@ -61,7 +65,9 @@ func TestGetBannersForSlot(t *testing.T) {
 	}
 	defer db.Close()
 
-	mock.ExpectQuery("SELECT banner_id from relations_banner_slot WHERE slot_id =").WithArgs(1)
+	var str string
+	str = "SELECT banner_id from relations_banner_slot WHERE slot_id ="
+	mock.ExpectQuery(str).WithArgs(1)
 
 	components.SetDatabase(db)
 	_, err = components.GetBannersForSlot(1)
@@ -80,13 +86,20 @@ func TestGetBannerRatings(t *testing.T) {
 
 	banners := []int{1, 2}
 
-	mock.ExpectQuery("SELECT (.+) as cnt from events WHERE banner_id = (.+) AND group_id = (.+) AND slot_id = (.+) AND type = (.+)").WithArgs(1, 1, 1, "show")
-	mock.ExpectQuery("SELECT (.+) as cnt from events WHERE banner_id = (.+) AND group_id = (.+) AND slot_id = (.+) AND type = (.+)").WithArgs(1, 1, 1, "click")
-	mock.ExpectQuery("SELECT (.+) from events WHERE type =").WithArgs("show")
+	var str string
+	str = "SELECT (.+) as cnt from events WHERE banner_id = (.+) AND group_id = (.+) AND slot_id = (.+) AND type = (.+)"
+	mock.ExpectQuery(str).WithArgs(1, 1, 1, "show")
+	str = "SELECT (.+) as cnt from events WHERE banner_id = (.+) AND group_id = (.+) AND slot_id = (.+) AND type = (.+)"
+	mock.ExpectQuery(str).WithArgs(1, 1, 1, "click")
+	str = "SELECT (.+) from events WHERE type ="
+	mock.ExpectQuery(str).WithArgs("show")
 
-	mock.ExpectQuery("SELECT (.+) as cnt from events WHERE banner_id = (.+) AND group_id = (.+) AND slot_id = (.+) AND type = (.+)").WithArgs(2, 1, 1, "show")
-	mock.ExpectQuery("SELECT (.+) as cnt from events WHERE banner_id = (.+) AND group_id = (.+) AND slot_id = (.+) AND type = (.+)").WithArgs(2, 1, 1, "click")
-	mock.ExpectQuery("SELECT (.+) from events WHERE type =").WithArgs("show")
+	str = "SELECT (.+) as cnt from events WHERE banner_id = (.+) AND group_id = (.+) AND slot_id = (.+) AND type = (.+)"
+	mock.ExpectQuery(str).WithArgs(2, 1, 1, "show")
+	str = "SELECT (.+) as cnt from events WHERE banner_id = (.+) AND group_id = (.+) AND slot_id = (.+) AND type = (.+)"
+	mock.ExpectQuery(str).WithArgs(2, 1, 1, "click")
+	str = "SELECT (.+) from events WHERE type ="
+	mock.ExpectQuery(str).WithArgs("show")
 
 	components.SetDatabase(db)
 	_ = components.GetBannerRatings(banners, 1, 1)

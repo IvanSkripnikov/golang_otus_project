@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -9,17 +10,16 @@ import (
 	"strings"
 
 	"github.com/IvanSkripnikov/golang_otus_project/components"
-	"github.com/IvanSkripnikov/golang_otus_project/database"
 	"github.com/IvanSkripnikov/golang_otus_project/logger"
 	"github.com/IvanSkripnikov/golang_otus_project/models"
 	"github.com/IvanSkripnikov/golang_otus_project/queue"
 )
 
-func GetAllBanners(w http.ResponseWriter, _ *http.Request) {
+func GetAllBanners(w http.ResponseWriter, _ *http.Request, db *sql.DB) {
 	w.Header().Set("Content-Type", "application/json")
 
 	query := "SELECT * from banners"
-	rows, err := database.DB.Query(query)
+	rows, err := db.Query(query)
 
 	if checkError(w, err) {
 		return
@@ -51,7 +51,7 @@ func GetAllBanners(w http.ResponseWriter, _ *http.Request) {
 	writeSuccess(w, buf.String())
 }
 
-func GetBanner(w http.ResponseWriter, r *http.Request) {
+func GetBanner(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var banner models.Banner
 	banner.ID, _ = getIDFromRequestString(r.URL.Path)
 
@@ -61,7 +61,7 @@ func GetBanner(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := "SELECT * from banners WHERE id = ?"
-	rows, err := database.DB.Prepare(query)
+	rows, err := db.Prepare(query)
 
 	if checkError(w, err) {
 		return
@@ -88,7 +88,7 @@ func GetBanner(w http.ResponseWriter, r *http.Request) {
 	writeSuccess(w, buf.String())
 }
 
-func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
+func AddBannerToSlot(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	w.Header().Set("Content-Type", "application/json")
 
 	params, resultString := getParamsFromQueryString(r.URL.Path)
@@ -102,7 +102,7 @@ func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := "INSERT INTO relations_banner_slot (banner_id, slot_id) VALUES (?, ?)"
-	rows, err := database.DB.Query(query, bannerID, slotID)
+	rows, err := db.Query(query, bannerID, slotID)
 
 	if checkError(w, err) {
 		return
@@ -116,7 +116,7 @@ func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
 	writeSuccess(w, "{\"message\": \"Successfully added!\"}")
 }
 
-func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request) {
+func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	w.Header().Set("Content-Type", "application/json")
 
 	params, resultString := getParamsFromQueryString(r.URL.Path)
@@ -130,7 +130,7 @@ func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := "DELETE FROM relations_banner_slot WHERE banner_id=? AND slot_id=?"
-	rows, err := database.DB.Query(query, bannerID, slotID)
+	rows, err := db.Query(query, bannerID, slotID)
 
 	if checkError(w, err) {
 		return
@@ -144,7 +144,7 @@ func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request) {
 	writeSuccess(w, "{\"message\": \"Successfully removed!\"}")
 }
 
-func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
+func GetBannerForShow(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	w.Header().Set("Content-Type", "application/json")
 
 	params, resultString := getParamsFromQueryString(r.URL.Path)
@@ -162,7 +162,7 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 
 	// записываем событие просмотра
 	query := "INSERT INTO events (`type`, `banner_id`, `slot_id`, `group_id`) VALUES (?, ?, ?, ?)"
-	rows, err := database.DB.Query(query, "show", bannerID, slotID, groupID)
+	rows, err := db.Query(query, "show", bannerID, slotID, groupID)
 
 	if checkError(w, err) {
 		return
@@ -173,7 +173,7 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 		_ = rows.Err()
 	}()
 
-	// отправляем событие в кафку
+	// отправляем событие в rabbitMQ
 	queue.SendEventToQueue("show", bannerID, slotID, groupID)
 
 	_, err = fmt.Fprint(w, strconv.Itoa(bannerID))
@@ -183,7 +183,7 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func EventClick(w http.ResponseWriter, r *http.Request) {
+func EventClick(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	w.Header().Set("Content-Type", "application/json")
 
 	params, resultString := getParamsFromQueryString(r.URL.Path)
@@ -198,9 +198,9 @@ func EventClick(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := "INSERT INTO events (type, banner_id, slot_id, group_id) VALUES (?, ?, ?, ?)"
-	rows, err := database.DB.Query(query, "click", bannerID, slotID, groupID)
+	rows, err := db.Query(query, "click", bannerID, slotID, groupID)
 
-	// отправляем событие в кафку
+	// отправляем событие в rabbitMQ
 	queue.SendEventToQueue("click", bannerID, slotID, groupID)
 
 	if checkError(w, err) {

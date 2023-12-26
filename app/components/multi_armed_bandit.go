@@ -2,7 +2,6 @@ package components
 
 import (
 	"database/sql"
-	"fmt"
 	"math"
 	"sort"
 
@@ -77,8 +76,6 @@ func GetBannerRatings(bannersForSlot []int, groupID, slotID int) []models.Rating
 	sort.Slice(rateBanners, func(i, j int) bool {
 		return rateBanners[i].Value > rateBanners[j].Value
 	})
-
-	fmt.Println(rateBanners)
 
 	return rateBanners
 }

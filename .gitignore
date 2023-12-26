@@ -1,4 +1,4 @@
-/log/
+/app/log/*.log
 *.exe
 *.exe~
 *.dll
