@@ -6,20 +6,21 @@ MySQL is used as the data store.
 
 ## Endpoints
 
-Method | Path | Description
---- | --- | ---
-GET | `/tasks` | Get all tasks |
-POST | `/tasks` | Create a new task |
-GET | `/tasks/{id}` | Get a task |
-PUT | `/tasks/{id}` | Update a task |
-DELETE | `/tasks/{id}` | Delete a task |
+Method | Path                                                        | Description             
+---  |-------------------------------------------------------------|-------------------------
+GET  | `/`                                                         | Main page               |
+GET  | `/banners`                                                  | Get all banners         |
+GET  | `/banners/{id}`                                             | Get banner by id        |
+POST | `/add_banner_to_slot/?banner={bannerId}&slot={slotId}`      | Add banner to slot      |
+POST | `/remove_banner_from_slot/?banner={bannerId}&slot={slotId}` | Remove banner from slot |
+GET  | `/get_banner_for_show/?group={groupId}&slot={slotId}`       | Get relevant banner     |
 
 ## Usage
 
 ```shell
 $ cp .env.example .env
 
-$ docker compose up --build
+$ docker compose up -d --build
 ```
 
 ## Tips
@@ -29,8 +30,3 @@ $ docker compose up --build
 ```shell
 $ docker compose exec -it db /bin/bash -c "mysql -uroot -p<PASSWORD>"
 ```
-
-### Import API test file with Thunder client
-
-1. Install extension from [here](https://marketplace.visualstudio.com/items?itemName=rangav.vscode-thunder-client)
-2. Import [JSON file](https://github.com/ega4432/go-rest-api-docker/blob/main/.vscode/thunder-collection_go-rest-api-docker.json)

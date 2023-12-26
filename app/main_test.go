@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/IvanSkripnikov/golang_otus_project/components"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -70,7 +71,7 @@ func TestBanners(t *testing.T) {
 }
 
 func TestGetBannerForShow(t *testing.T) {
-	countBefore := database.GetAllEvents("show")
+	countBefore := components.GetAllEvents("show")
 	handler := GetHTTPHandler()
 
 	server := httptest.NewServer(handler)
@@ -82,7 +83,7 @@ func TestGetBannerForShow(t *testing.T) {
 		Expect().
 		Status(http.StatusOK).JSON()
 
-	countAfter := database.GetAllEvents("show")
+	countAfter := components.GetAllEvents("show")
 
 	if countBefore+1 != countAfter {
 		t.Errorf("Not increment banner shows!")
@@ -96,7 +97,7 @@ func TestGetBannerForShow(t *testing.T) {
 }
 
 func TestEventClick(t *testing.T) {
-	countBefore := database.GetAllEvents("click")
+	countBefore := components.GetAllEvents("click")
 
 	handler := GetHTTPHandler()
 	server := httptest.NewServer(handler)
@@ -108,7 +109,7 @@ func TestEventClick(t *testing.T) {
 		Expect().
 		Status(http.StatusOK)
 
-	countAfter := database.GetAllEvents("click")
+	countAfter := components.GetAllEvents("click")
 
 	if countBefore+1 != countAfter {
 		t.Errorf("Not increment banner shows!")
