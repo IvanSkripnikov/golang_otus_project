@@ -12,13 +12,18 @@ func HelloPageHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
+
 		_, err := fmt.Fprint(w, "{\"message\": \"Hello dear friend! Welcome!\"}")
 		if err != nil {
 			logger.SendToErrorLog(err.Error())
+
 			return
 		}
+
 		w.WriteHeader(http.StatusOK)
+
 	default:
+
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }

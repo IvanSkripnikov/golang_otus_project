@@ -13,31 +13,45 @@ const (
 	serviceNameDefault = "banner-rotation"
 
 	panicLevel = 0
+
 	fatalLevel = 1
+
 	errorLevel = 2
-	warnLevel  = 3
-	infoLevel  = 4
+
+	warnLevel = 3
+
+	infoLevel = 4
+
 	debugLevel = 5
+
 	traceLevel = 6
 )
 
 var errorLevels = map[int]string{
 	panicLevel: "panic",
+
 	fatalLevel: "fatal",
+
 	errorLevel: "error",
-	warnLevel:  "warning",
-	infoLevel:  "info",
+
+	warnLevel: "warning",
+
+	infoLevel: "info",
+
 	debugLevel: "debug",
+
 	traceLevel: "trace",
 }
 
 func SendToPanicLog(message string) {
 	pushLogger(message, panicLevel)
+
 	os.Exit(1)
 }
 
 func SendToFatalLog(message string) {
 	pushLogger(message, fatalLevel)
+
 	os.Exit(1)
 }
 
@@ -69,6 +83,7 @@ func pushLogger(message string, currentLevel int) {
 	}
 
 	levelValue, errLevel := strconv.Atoi(configLogLevel)
+
 	var logLevel int
 
 	if errLevel != nil {
@@ -82,11 +97,14 @@ func pushLogger(message string, currentLevel int) {
 	}
 
 	flag.Parse()
+
 	logsFilePath := getLogFilePath()
+
 	logFile, err := os.OpenFile(logsFilePath, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0o777)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer func(logFile *os.File) {
 		err := logFile.Close()
 		if err != nil {
@@ -95,6 +113,7 @@ func pushLogger(message string, currentLevel int) {
 	}(logFile)
 
 	levelMessage := errorLevels[currentLevel]
+
 	fmt.Printf("[%s] [%s] [%s] %s \n", getHostName(), serviceNameDefault, levelMessage, message)
 }
 
@@ -110,9 +129,12 @@ func getLogFilePath() string {
 
 func getHostName() string {
 	var hostName string
+
 	hostNameFile, err := os.ReadFile("/etc/hostname")
+
 	if err != nil {
 		serverName, _ := os.Hostname()
+
 		hostName = serverName
 	} else {
 		hostName = strings.ReplaceAll(string(hostNameFile), "\n", "")

@@ -24,12 +24,14 @@ func GetNeedBanner(slotID, groupID int) int {
 	var resultBannerID int
 
 	// находим баннеры для данного слота
+
 	bannersForSlot, err := GetBannersForSlot(slotID)
 	if err != nil {
 		logger.SendToFatalLog("error while search banners.")
 	}
 
 	// получаем рейтинги по баннерам
+
 	rateBanners := GetBannerRatings(bannersForSlot, groupID, slotID)
 
 	resultBannerID = rateBanners[0].BannerID
@@ -45,12 +47,16 @@ func GetBannerRatings(bannersForSlot []int, groupID, slotID int) []models.Rating
 	rateBanners := make([]models.Rating, len(bannersForSlot))
 
 	var averageRating, rate float64
+
 	for k, bannerID := range bannersForSlot {
 		allShowsBanner := float64(GetBannerEvents(bannerID, groupID, slotID, "show"))
+
 		allClickBanner := float64(GetBannerEvents(bannerID, groupID, slotID, "click"))
+
 		allShows := float64(GetAllEvents("show"))
 
 		// находим средний рейтинг баннера
+
 		if allClickBanner == 0 || allShowsBanner == 0 {
 			averageRating = 0
 		} else {
@@ -58,6 +64,7 @@ func GetBannerRatings(bannersForSlot []int, groupID, slotID int) []models.Rating
 		}
 
 		// считаем рейтинг баннера
+
 		if allShowsBanner == 0 {
 			rate = 0
 		} else {
@@ -66,13 +73,15 @@ func GetBannerRatings(bannersForSlot []int, groupID, slotID int) []models.Rating
 
 		rating := models.Rating{
 			BannerID: bannerID,
-			Value:    rate,
+
+			Value: rate,
 		}
 
 		rateBanners[k] = rating
 	}
 
 	// сортируем итоговый набор рейтингов
+
 	sort.Slice(rateBanners, func(i, j int) bool {
 		return rateBanners[i].Value > rateBanners[j].Value
 	})
@@ -82,6 +91,7 @@ func GetBannerRatings(bannersForSlot []int, groupID, slotID int) []models.Rating
 
 func GetAllEvents(eventType string) int {
 	query := "SELECT COUNT(*) from events WHERE type = ?"
+
 	rows, err := db.Query(query, eventType)
 	if err != nil {
 		return 0
@@ -89,6 +99,7 @@ func GetAllEvents(eventType string) int {
 
 	defer func() {
 		_ = rows.Close()
+
 		_ = rows.Err()
 	}()
 
@@ -105,6 +116,7 @@ func GetAllEvents(eventType string) int {
 
 func GetBannerEvents(bannerID, groupID, slotID int, eventType string) int {
 	query := "SELECT COUNT(*) as cnt from events WHERE banner_id = ? AND group_id = ? AND slot_id = ? AND type = ?"
+
 	rows, err := db.Query(query, bannerID, groupID, slotID, eventType)
 	if err != nil {
 		return 0
@@ -112,6 +124,7 @@ func GetBannerEvents(bannerID, groupID, slotID int, eventType string) int {
 
 	defer func() {
 		_ = rows.Close()
+
 		_ = rows.Err()
 	}()
 
@@ -128,6 +141,7 @@ func GetBannerEvents(bannerID, groupID, slotID int, eventType string) int {
 
 func GetBannersForSlot(slotID int) ([]int, error) {
 	query := "SELECT banner_id from relations_banner_slot WHERE slot_id = ?"
+
 	rows, err := db.Query(query, slotID)
 	if err != nil {
 		return nil, err
@@ -135,16 +149,21 @@ func GetBannersForSlot(slotID int) ([]int, error) {
 
 	defer func() {
 		_ = rows.Close()
+
 		_ = rows.Err()
 	}()
 
 	banners := make([]int, 0)
+
 	banner := 0
+
 	for rows.Next() {
 		if err = rows.Scan(&banner); err != nil {
 			logger.SendToErrorLog(err.Error())
+
 			continue
 		}
+
 		banners = append(banners, banner)
 	}
 
