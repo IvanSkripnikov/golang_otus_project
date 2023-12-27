@@ -8,6 +8,8 @@ RUN apk update && \
 
 ADD ./app /go/src/app
 
+COPY ./.env.example ./.env
+
 RUN cd /go/src/app && \
     go install github.com/IvanSkripnikov/golang_otus_project
 
