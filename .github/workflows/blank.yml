@@ -43,3 +43,17 @@ jobs:
       - name: Unit tests
         run: go test -v -count=1 -race -timeout=1m .
         working-directory: ./app
+
+  tests_by_makefile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ^1.20
+
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: make run
+        run: make run
