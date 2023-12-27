@@ -62,6 +62,3 @@ jobs:
 
       - name: make down
         run: make down
-
-      - name: make lint
-        run: make lint

@@ -174,7 +174,9 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	}()
 
 	// отправляем событие в rabbitMQ
-	queue.SendEventToQueue("show", bannerID, slotID, groupID)
+	go func() {
+		queue.SendEventToQueue("show", bannerID, slotID, groupID)
+	}()
 
 	_, err = fmt.Fprint(w, strconv.Itoa(bannerID))
 	if err != nil {
@@ -201,7 +203,9 @@ func EventClick(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	rows, err := db.Query(query, "click", bannerID, slotID, groupID)
 
 	// отправляем событие в rabbitMQ
-	queue.SendEventToQueue("click", bannerID, slotID, groupID)
+	go func() {
+		queue.SendEventToQueue("click", bannerID, slotID, groupID)
+	}()
 
 	if checkError(w, err) {
 		return
