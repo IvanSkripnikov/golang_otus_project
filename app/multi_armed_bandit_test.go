@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/IvanSkripnikov/golang_otus_project/components"
@@ -53,7 +54,7 @@ func TestGetBannerRatings(t *testing.T) {
 	if len(result) != 2 {
 		t.Error("error get banners rating")
 	}
-
+	fmt.Println(result)
 	if result[0].BannerID != 1 || result[1].BannerID != 3 {
 		t.Error("unexpected result")
 	}
