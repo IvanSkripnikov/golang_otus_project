@@ -38,7 +38,6 @@ func TestGetBannerEvents(t *testing.T) {
 
 func TestGetBannersForSlot(t *testing.T) {
 	banners, err := components.GetBannersForSlot(1)
-
 	if err != nil {
 		t.Errorf("error while get banners for slot: %v", err)
 	}
