@@ -12,3 +12,10 @@ type Rating struct {
 	BannerID int
 	Value    float64
 }
+
+type Message struct {
+	Type     string
+	BannerID int
+	SlotID   int
+	GroupID  int
+}

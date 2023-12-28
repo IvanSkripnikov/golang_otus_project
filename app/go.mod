@@ -3,10 +3,9 @@ module github.com/IvanSkripnikov/golang_otus_project
 go 1.19
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.5.1
 	github.com/gavv/httpexpect/v2 v2.16.0
 	github.com/go-sql-driver/mysql v1.6.0
-	github.com/streadway/amqp v1.1.0
+	github.com/rabbitmq/amqp091-go v1.9.0
 )
 
 require (

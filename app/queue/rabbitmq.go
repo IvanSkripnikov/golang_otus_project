@@ -1,22 +1,14 @@
 package queue
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
 	"github.com/IvanSkripnikov/golang_otus_project/logger"
-	"github.com/streadway/amqp"
+	"github.com/IvanSkripnikov/golang_otus_project/models"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
-
-type Message struct {
-	Type string
-
-	BannerID int
-
-	SlotID int
-
-	GroupID int
-}
 
 func SendEventToQueue(eventName string, bannerID, slotID, groupID int) {
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
@@ -48,7 +40,7 @@ func SendEventToQueue(eventName string, bannerID, slotID, groupID int) {
 
 	failOnError(err, "Failed to declare a queue")
 
-	message := Message{Type: eventName, BannerID: bannerID, SlotID: slotID, GroupID: groupID}
+	message := models.Message{Type: eventName, BannerID: bannerID, SlotID: slotID, GroupID: groupID}
 
 	body, err := json.Marshal(message)
 	if err != nil {
@@ -57,20 +49,15 @@ func SendEventToQueue(eventName string, bannerID, slotID, groupID int) {
 		return
 	}
 
-	err = ch.Publish(
-
+	err = ch.PublishWithContext(
+		context.Background(),
 		"",
-
 		q.Name,
-
 		false,
-
 		false,
-
 		amqp.Publishing{
 			ContentType: "text/plain",
-
-			Body: body,
+			Body:        body,
 		})
 
 	failOnError(err, "Failed to publish a message")

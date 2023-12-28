@@ -28,7 +28,7 @@ linters-settings:
           - github.com/IvanSkripnikov/golang_otus_project/logger
           - github.com/IvanSkripnikov/golang_otus_project/models
           - github.com/IvanSkripnikov/golang_otus_project/queue
-          - github.com/streadway/amqp
+          - github.com/rabbitmq/amqp091-go
           - io
           - log
           - math
