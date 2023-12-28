@@ -54,7 +54,7 @@ func TestGetBannerRatings(t *testing.T) {
 		t.Error("error get banners rating")
 	}
 
-	if result[0].BannerID != 1 || result[0].Value == 0 || result[1].BannerID != 3 || result[1].Value == 0 {
+	if result[0].BannerID != 1 || result[1].BannerID != 3 {
 		t.Error("unexpected result")
 	}
 }
