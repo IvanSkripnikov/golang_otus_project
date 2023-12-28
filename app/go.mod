@@ -1,6 +1,6 @@
 module github.com/IvanSkripnikov/golang_otus_project
 
-go 1.19
+go 1.20
 
 require (
 	github.com/gavv/httpexpect/v2 v2.16.0
