@@ -1,6 +1,5 @@
 /app/log/*.log
-*.exe
-*.exe~
+
 *.dll
 *.so
 *.dylib
