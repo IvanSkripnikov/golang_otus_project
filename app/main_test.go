@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -9,8 +8,6 @@ import (
 
 	"github.com/IvanSkripnikov/golang_otus_project/components"
 	"github.com/IvanSkripnikov/golang_otus_project/controllers"
-	"github.com/IvanSkripnikov/golang_otus_project/database"
-	"github.com/IvanSkripnikov/golang_otus_project/logger"
 	"github.com/gavv/httpexpect/v2"
 )
 
@@ -128,13 +125,6 @@ func TestRemoveBanner(t *testing.T) {
 	defer server.Close()
 
 	e := httpexpect.Default(t, server.URL)
-
-	tx, err := database.DB.BeginTx(context.Background(), nil)
-	if err != nil {
-		logger.SendToFatalLog(err.Error())
-	}
-	defer tx.Rollback()
-	// далее - обычная работа как с *sql.DB
 
 	e.POST("/remove_banner_from_slot/slot=1&banner=1").
 		Expect().
