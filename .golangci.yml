@@ -22,10 +22,10 @@ linters-settings:
           - github.com/gavv/httpexpect/v2
           - github.com/go-sql-driver/mysql
           - github.com/IvanSkripnikov/golang_otus_project/components
+          - github.com/IvanSkripnikov/golang_otus_project/config
           - github.com/IvanSkripnikov/golang_otus_project/controllers
           - github.com/IvanSkripnikov/golang_otus_project/database
           - github.com/IvanSkripnikov/golang_otus_project/helpers
-          - github.com/IvanSkripnikov/golang_otus_project/initiate
           - github.com/IvanSkripnikov/golang_otus_project/logger
           - github.com/IvanSkripnikov/golang_otus_project/models
           - github.com/IvanSkripnikov/golang_otus_project/queue
