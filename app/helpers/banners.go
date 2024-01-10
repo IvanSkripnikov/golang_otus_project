@@ -157,8 +157,11 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	allShows := float64(GetAllEvents("show"))
+	bannersStatistics := getBannersStatistics(slotID, groupID)
+
 	// получаем id баннера
-	bannerID := components.GetNeedBanner(slotID, groupID)
+	bannerID := components.GetNeedBanner(allShows, bannersStatistics)
 
 	// записываем событие просмотра
 	query := "INSERT INTO events (type, banner_id, slot_id, group_id) VALUES (?, ?, ?, ?)"
@@ -219,7 +222,107 @@ func EventClick(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, r)
 }
 
+func GetAllEvents(eventType string) int {
+	query := "SELECT COUNT(*) from events WHERE type = ?"
+
+	rows, err := database.DB.Query(query, eventType)
+	if err != nil {
+		return 0
+	}
+
+	defer func() {
+		_ = rows.Close()
+
+		_ = rows.Err()
+	}()
+
+	count := 0
+
+	for rows.Next() {
+		if err = rows.Scan(&count); err != nil {
+			return 0
+		}
+	}
+
+	return count
+}
+
+func GetBannersForSlot(slotID int) ([]int, error) {
+	query := "SELECT banner_id from relations_banner_slot WHERE slot_id = ?"
+
+	rows, err := database.DB.Query(query, slotID)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		_ = rows.Close()
+
+		_ = rows.Err()
+	}()
+
+	banners := make([]int, 0)
+
+	banner := 0
+
+	for rows.Next() {
+		if err = rows.Scan(&banner); err != nil {
+			logger.SendToErrorLog(err.Error())
+
+			continue
+		}
+
+		banners = append(banners, banner)
+	}
+
+	return banners, nil
+}
+
+func GetBannerEvents(bannerID, groupID, slotID int, eventType string) int {
+	query := "SELECT COUNT(*) as cnt from events WHERE banner_id = ? AND group_id = ? AND slot_id = ? AND type = ?"
+
+	rows, err := database.DB.Query(query, bannerID, groupID, slotID, eventType)
+	if err != nil {
+		return 0
+	}
+
+	defer func() {
+		_ = rows.Close()
+
+		_ = rows.Err()
+	}()
+
+	count := 0
+
+	for rows.Next() {
+		if err = rows.Scan(&count); err != nil {
+			return 0
+		}
+	}
+
+	return count
+}
+
 // -------------PRIVATE----------------------
+
+func getBannersStatistics(slotID, groupID int) []models.BannerStats {
+	// находим баннеры для данного слота
+	bannersForSlot, err := GetBannersForSlot(slotID)
+	if err != nil {
+		logger.SendToFatalLog("error while search banners.")
+	}
+
+	bannerStats := make([]models.BannerStats, len(bannersForSlot))
+	for k, bannerID := range bannersForSlot {
+		bannerStats[k] = models.BannerStats{
+			BannerID:       bannerID,
+			AllShowsBanner: float64(GetBannerEvents(bannerID, groupID, slotID, "show")),
+			AllClickBanner: float64(GetBannerEvents(bannerID, groupID, slotID, "click")),
+		}
+	}
+
+	return bannerStats
+}
 
 func checkError(w http.ResponseWriter, err error) bool {
 	if err != nil {

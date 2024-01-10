@@ -1,6 +1,9 @@
 package components
 
-import "testing"
+import (
+	"github.com/IvanSkripnikov/golang_otus_project/models"
+	"testing"
+)
 
 func TestGetRating(t *testing.T) {
 	expected := 1.924720344358278
@@ -14,33 +17,9 @@ func TestGetRating(t *testing.T) {
 	}
 }
 
-func TestGetAllEvents(t *testing.T) {
-	countEvents := GetAllEvents("show")
-	if countEvents == 0 {
-		t.Error("error check events count")
-	}
-}
-
-func TestGetBannerEvents(t *testing.T) {
-	countBanners := GetBannerEvents(1, 1, 1, "show")
-	if countBanners == 0 {
-		t.Error("error check banner events count")
-	}
-}
-
-func TestGetBannersForSlot(t *testing.T) {
-	banners, err := GetBannersForSlot(1)
-	if err != nil {
-		t.Errorf("error while get banners for slot: %v", err)
-	}
-	if len(banners) == 0 {
-		t.Error("error check banners count")
-	}
-}
-
 func TestGetBannerRatings(t *testing.T) {
-	banners := []int{1, 3}
-	result := GetBannerRatings(banners, 1, 1)
+	bannersStatistics := []models.BannerStats{{BannerID: 1, AllClickBanner: 1, AllShowsBanner: 10}, {BannerID: 1, AllClickBanner: 5, AllShowsBanner: 20}}
+	result := GetBannerRatings(128, bannersStatistics)
 
 	if len(result) != 2 {
 		t.Error("error get banners rating")

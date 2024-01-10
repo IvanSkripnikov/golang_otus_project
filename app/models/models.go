@@ -19,3 +19,9 @@ type Message struct {
 	SlotID   int
 	GroupID  int
 }
+
+type BannerStats struct {
+	BannerID       int
+	AllShowsBanner float64
+	AllClickBanner float64
+}
