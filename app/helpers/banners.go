@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/IvanSkripnikov/golang_otus_project/database"
 	"net/http"
 	"strconv"
 	"strings"
 
 	"github.com/IvanSkripnikov/golang_otus_project/components"
+	"github.com/IvanSkripnikov/golang_otus_project/database"
 	"github.com/IvanSkripnikov/golang_otus_project/logger"
 	"github.com/IvanSkripnikov/golang_otus_project/models"
 	"github.com/IvanSkripnikov/golang_otus_project/queue"
@@ -19,6 +19,7 @@ func GetAllBanners(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	query := "SELECT * from banners"
+
 	rows, err := database.DB.Query(query)
 
 	if checkError(w, err) {
@@ -27,23 +28,30 @@ func GetAllBanners(w http.ResponseWriter, _ *http.Request) {
 
 	defer func() {
 		_ = rows.Close()
+
 		_ = rows.Err()
 	}()
 
 	var banners []models.Banner
+
 	for rows.Next() {
 		banner := models.Banner{}
+
 		if err = rows.Scan(&banner.ID, &banner.Title, &banner.Body, &banner.CreatedAt, &banner.Active); err != nil {
 			logger.SendToErrorLog(err.Error())
+
 			continue
 		}
+
 		banners = append(banners, banner)
 	}
 
 	var buf bytes.Buffer
+
 	je := json.NewEncoder(&buf)
 
 	err = je.Encode(&banners)
+
 	if checkError(w, err) {
 		return
 	}
@@ -53,14 +61,17 @@ func GetAllBanners(w http.ResponseWriter, _ *http.Request) {
 
 func GetBanner(w http.ResponseWriter, r *http.Request) {
 	var banner models.Banner
+
 	banner.ID, _ = getIDFromRequestString(r.URL.Path)
 
 	if banner.ID == 0 {
 		wrongParamsResponse(w)
+
 		return
 	}
 
 	query := "SELECT * from banners WHERE id = ?"
+
 	rows, err := database.DB.Prepare(query)
 
 	if checkError(w, err) {
@@ -70,17 +81,23 @@ func GetBanner(w http.ResponseWriter, r *http.Request) {
 	defer rows.Close()
 
 	err = rows.QueryRow(banner.ID).Scan(&banner.ID, &banner.Title, &banner.Body, &banner.CreatedAt, &banner.Active)
+
 	if err != nil {
 		logger.SendToErrorLog(err.Error())
+
 		w.WriteHeader(http.StatusNotFound)
+
 		fmt.Fprint(w, "{ \"message\": \"Not Found\"}")
+
 		return
 	}
 
 	var buf bytes.Buffer
+
 	je := json.NewEncoder(&buf)
 
 	err = je.Encode(&banner)
+
 	if checkError(w, err) {
 		return
 	}
@@ -94,14 +111,17 @@ func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
 	params, resultString := getParamsFromQueryString(r.URL.Path)
 
 	slotID, okSlot := params["slot"]
+
 	bannerID, okBanner := params["banner"]
 
 	if !okSlot || !okBanner || resultString != "" {
 		wrongParamsResponse(w)
+
 		return
 	}
 
 	query := "INSERT INTO relations_banner_slot (banner_id, slot_id) VALUES (?, ?)"
+
 	rows, err := database.DB.Query(query, bannerID, slotID)
 
 	if checkError(w, err) {
@@ -110,6 +130,7 @@ func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
 
 	defer func() {
 		_ = rows.Close()
+
 		_ = rows.Err()
 	}()
 
@@ -122,14 +143,17 @@ func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request) {
 	params, resultString := getParamsFromQueryString(r.URL.Path)
 
 	slotID, okSlot := params["slot"]
+
 	bannerID, okBanner := params["banner"]
 
 	if !okSlot || !okBanner || resultString != "" {
 		wrongParamsResponse(w)
+
 		return
 	}
 
 	query := "DELETE FROM relations_banner_slot WHERE banner_id=? AND slot_id=?"
+
 	rows, err := database.DB.Query(query, bannerID, slotID)
 
 	if checkError(w, err) {
@@ -138,6 +162,7 @@ func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request) {
 
 	defer func() {
 		_ = rows.Close()
+
 		_ = rows.Err()
 	}()
 
@@ -150,21 +175,27 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 	params, resultString := getParamsFromQueryString(r.URL.Path)
 
 	slotID, okSlot := params["slot"]
+
 	groupID, okGroup := params["group"]
 
 	if !okSlot || !okGroup || resultString != "" {
 		wrongParamsResponse(w)
+
 		return
 	}
 
 	allShows := float64(GetAllEvents("show"))
+
 	bannersStatistics := getBannersStatistics(slotID, groupID)
 
 	// получаем id баннера
+
 	bannerID := components.GetNeedBanner(allShows, bannersStatistics)
 
 	// записываем событие просмотра
+
 	query := "INSERT INTO events (type, banner_id, slot_id, group_id) VALUES (?, ?, ?, ?)"
+
 	rows, err := database.DB.Query(query, "show", bannerID, slotID, groupID)
 
 	if checkError(w, err) {
@@ -173,17 +204,21 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 
 	defer func() {
 		_ = rows.Close()
+
 		_ = rows.Err()
 	}()
 
 	// отправляем событие в rabbitMQ
+
 	go func() {
 		queue.SendEventToQueue("show", bannerID, slotID, groupID)
 	}()
 
 	_, err = fmt.Fprint(w, strconv.Itoa(bannerID))
+
 	if err != nil {
 		logger.SendToErrorLog(err.Error())
+
 		return
 	}
 }
@@ -194,18 +229,23 @@ func EventClick(w http.ResponseWriter, r *http.Request) {
 	params, resultString := getParamsFromQueryString(r.URL.Path)
 
 	slotID, okSlot := params["slot"]
+
 	groupID, okGroup := params["group"]
+
 	bannerID, okBanner := params["banner"]
 
 	if !okSlot || !okGroup || !okBanner || resultString != "" {
 		wrongParamsResponse(w)
+
 		return
 	}
 
 	query := "INSERT INTO events (type, banner_id, slot_id, group_id) VALUES (?, ?, ?, ?)"
+
 	rows, err := database.DB.Query(query, "click", bannerID, slotID, groupID)
 
 	// отправляем событие в rabbitMQ
+
 	go func() {
 		queue.SendEventToQueue("click", bannerID, slotID, groupID)
 	}()
@@ -216,6 +256,7 @@ func EventClick(w http.ResponseWriter, r *http.Request) {
 
 	defer func() {
 		_ = rows.Close()
+
 		_ = rows.Err()
 	}()
 
@@ -307,16 +348,20 @@ func GetBannerEvents(bannerID, groupID, slotID int, eventType string) int {
 
 func getBannersStatistics(slotID, groupID int) []models.BannerStats {
 	// находим баннеры для данного слота
+
 	bannersForSlot, err := GetBannersForSlot(slotID)
 	if err != nil {
 		logger.SendToFatalLog("error while search banners.")
 	}
 
 	bannerStats := make([]models.BannerStats, len(bannersForSlot))
+
 	for k, bannerID := range bannersForSlot {
 		bannerStats[k] = models.BannerStats{
-			BannerID:       bannerID,
+			BannerID: bannerID,
+
 			AllShowsBanner: float64(GetBannerEvents(bannerID, groupID, slotID, "show")),
+
 			AllClickBanner: float64(GetBannerEvents(bannerID, groupID, slotID, "click")),
 		}
 	}
@@ -327,8 +372,11 @@ func getBannersStatistics(slotID, groupID int) []models.BannerStats {
 func checkError(w http.ResponseWriter, err error) bool {
 	if err != nil {
 		logger.SendToErrorLog(err.Error())
+
 		w.WriteHeader(http.StatusInternalServerError)
+
 		fmt.Fprint(w, err)
+
 		return true
 	}
 
@@ -337,16 +385,20 @@ func checkError(w http.ResponseWriter, err error) bool {
 
 func writeSuccess(w http.ResponseWriter, message string) {
 	w.WriteHeader(http.StatusOK)
+
 	_, err := fmt.Fprint(w, message)
 	if err != nil {
 		logger.SendToErrorLog(fmt.Sprintf("write success error %s", err.Error()))
+
 		return
 	}
 }
 
 func wrongParamsResponse(w http.ResponseWriter) {
 	resultString := "{\"message\": \"Invalid request GetHandler\"}"
+
 	fmt.Fprint(w, resultString)
+
 	w.WriteHeader(http.StatusBadRequest)
 }
 
@@ -360,18 +412,23 @@ func getParamsFromQueryString(url string) (map[string]int, string) {
 	resultMap := map[string]int{}
 
 	outMessage := ""
+
 	queryParams := strings.Split(url, "/")
 
 	params := strings.Split(queryParams[len(queryParams)-1], "&")
+
 	if len(params) == 1 {
 		outMessage = "not all params is set"
+
 		return resultMap, outMessage
 	}
 
 	for _, v := range params {
 		pair := strings.Split(v, "=")
+
 		if len(pair) == 1 {
 			outMessage = "incorrect params value: " + v
+
 			return resultMap, outMessage
 		}
 

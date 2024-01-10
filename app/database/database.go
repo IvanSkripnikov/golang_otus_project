@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+
 	"github.com/IvanSkripnikov/golang_otus_project/initiate"
 	"github.com/IvanSkripnikov/golang_otus_project/logger"
 	_ "github.com/go-sql-driver/mysql" // nolint:nolintlint
@@ -18,6 +19,7 @@ func InitDataBase() *sql.DB {
 	logger.SendToInfoLog("connecting ...")
 
 	// get environment variables
+
 	dsn := initiate.GetDatabaseConnectionString()
 
 	db, err := sql.Open("mysql", dsn)
