@@ -19,11 +19,12 @@ func TestGetRating(t *testing.T) {
 }
 
 func TestGetBannerRatings(t *testing.T) {
+	var allShows float64 = 128
 	bannersStatistics := []models.BannerStats{
 		{BannerID: 1, AllClickBanner: 1, AllShowsBanner: 10},
-		{BannerID: 1, AllClickBanner: 5, AllShowsBanner: 20},
+		{BannerID: 3, AllClickBanner: 5, AllShowsBanner: 20},
 	}
-	result := GetBannerRatings(128, bannersStatistics)
+	result := GetBannerRatings(allShows, bannersStatistics)
 
 	if len(result) != 2 {
 		t.Error("error get banners rating")
@@ -38,5 +39,19 @@ func TestGetBannerRatings(t *testing.T) {
 
 	if success != 2 {
 		t.Error("unexpected result")
+	}
+}
+
+func TestGetNeedBanner(t *testing.T) {
+	var allShows float64 = 200
+	bannersStatistics := []models.BannerStats{
+		{BannerID: 1, AllClickBanner: 1, AllShowsBanner: 10},
+		{BannerID: 2, AllClickBanner: 2, AllShowsBanner: 20},
+		{BannerID: 3, AllClickBanner: 5, AllShowsBanner: 30},
+	}
+	bannerID := GetNeedBanner(allShows, bannersStatistics)
+
+	if bannerID != 1 {
+		t.Errorf("Expected %v but got %v", 1, bannerID)
 	}
 }

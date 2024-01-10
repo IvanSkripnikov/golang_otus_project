@@ -134,7 +134,6 @@ func getHostName() string {
 
 	if err != nil {
 		serverName, _ := os.Hostname()
-
 		hostName = serverName
 	} else {
 		hostName = strings.ReplaceAll(string(hostNameFile), "\n", "")
