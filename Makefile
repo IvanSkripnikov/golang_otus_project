@@ -12,13 +12,13 @@ down:
 # запуск интеграционных тестов
 test-integration: run
 	cd app && \
-	go test -race -count 1 .
+	go test -race -count 100 .
 
 # запуск тестов core-логики
 test-core: run
 	cd app && \
 	cd components && \
-	go test -race -count 1 .
+	go test -race -count 100 .
 
 install-lint-deps:
 	(which golangci-lint > /dev/null) || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.55.2
