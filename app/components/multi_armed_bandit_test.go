@@ -1,8 +1,9 @@
 package components
 
 import (
-	"github.com/IvanSkripnikov/golang_otus_project/models"
 	"testing"
+
+	"github.com/IvanSkripnikov/golang_otus_project/models"
 )
 
 func TestGetRating(t *testing.T) {
@@ -18,7 +19,10 @@ func TestGetRating(t *testing.T) {
 }
 
 func TestGetBannerRatings(t *testing.T) {
-	bannersStatistics := []models.BannerStats{{BannerID: 1, AllClickBanner: 1, AllShowsBanner: 10}, {BannerID: 1, AllClickBanner: 5, AllShowsBanner: 20}}
+	bannersStatistics := []models.BannerStats{
+		{BannerID: 1, AllClickBanner: 1, AllShowsBanner: 10},
+		{BannerID: 1, AllClickBanner: 5, AllShowsBanner: 20},
+	}
 	result := GetBannerRatings(128, bannersStatistics)
 
 	if len(result) != 2 {
