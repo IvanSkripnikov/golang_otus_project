@@ -1,7 +1,6 @@
 package components
 
 import (
-	"database/sql"
 	"math"
 	"sort"
 
@@ -9,16 +8,6 @@ import (
 	"github.com/IvanSkripnikov/golang_otus_project/logger"
 	"github.com/IvanSkripnikov/golang_otus_project/models"
 )
-
-var db *sql.DB
-
-func init() {
-	SetDatabase(database.DB)
-}
-
-func SetDatabase(database *sql.DB) {
-	db = database
-}
 
 func GetNeedBanner(slotID, groupID int) int {
 	var resultBannerID int
@@ -92,7 +81,7 @@ func GetBannerRatings(bannersForSlot []int, groupID, slotID int) []models.Rating
 func GetAllEvents(eventType string) int {
 	query := "SELECT COUNT(*) from events WHERE type = ?"
 
-	rows, err := db.Query(query, eventType)
+	rows, err := database.DB.Query(query, eventType)
 	if err != nil {
 		return 0
 	}
@@ -117,7 +106,7 @@ func GetAllEvents(eventType string) int {
 func GetBannerEvents(bannerID, groupID, slotID int, eventType string) int {
 	query := "SELECT COUNT(*) as cnt from events WHERE banner_id = ? AND group_id = ? AND slot_id = ? AND type = ?"
 
-	rows, err := db.Query(query, bannerID, groupID, slotID, eventType)
+	rows, err := database.DB.Query(query, bannerID, groupID, slotID, eventType)
 	if err != nil {
 		return 0
 	}
@@ -142,7 +131,7 @@ func GetBannerEvents(bannerID, groupID, slotID int, eventType string) int {
 func GetBannersForSlot(slotID int) ([]int, error) {
 	query := "SELECT banner_id from relations_banner_slot WHERE slot_id = ?"
 
-	rows, err := db.Query(query, slotID)
+	rows, err := database.DB.Query(query, slotID)
 	if err != nil {
 		return nil, err
 	}
