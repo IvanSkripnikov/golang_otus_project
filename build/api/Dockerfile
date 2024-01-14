@@ -12,3 +12,5 @@ RUN cd /go/src/app && \
     go install github.com/IvanSkripnikov/golang_otus_project
 
 WORKDIR "/go"
+
+ENTRYPOINT golang_otus_project
