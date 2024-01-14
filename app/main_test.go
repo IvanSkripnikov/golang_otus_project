@@ -7,9 +7,14 @@ import (
 	"testing"
 
 	"github.com/IvanSkripnikov/golang_otus_project/controllers"
+	"github.com/IvanSkripnikov/golang_otus_project/database"
 	"github.com/IvanSkripnikov/golang_otus_project/helpers"
 	"github.com/gavv/httpexpect/v2"
 )
+
+func init() {
+	database.InitDataBase("localhost")
+}
 
 func TestRoot(t *testing.T) {
 	expected := "{\"message\": \"Hello dear friend! Welcome!\"}"

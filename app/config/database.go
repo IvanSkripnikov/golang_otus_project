@@ -20,10 +20,9 @@ func GetDatabaseConfig() models.DBConfig {
 	}
 }
 
-func GetDatabaseConnectionString() string {
+func GetDatabaseConnectionString(host string) string {
 	config := GetDatabaseConfig()
-
-	netAddr := fmt.Sprintf("%s(%s)", config.Protocol, config.Address)
+	netAddr := fmt.Sprintf("%s(%s)", config.Protocol, host+":3306")
 
 	return fmt.Sprintf("%s:%s@%s/%s?timeout=30s", config.User, config.Password, netAddr, config.Database)
 }

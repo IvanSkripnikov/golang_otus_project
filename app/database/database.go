@@ -12,15 +12,14 @@ import (
 var DB *sql.DB
 
 func init() {
-	DB = InitDataBase()
+	DB = InitDataBase("db")
 }
 
-func InitDataBase() *sql.DB {
+func InitDataBase(host string) *sql.DB {
 	logger.SendToInfoLog("connecting ...")
 
 	// get environment variables
-
-	dsn := config.GetDatabaseConnectionString()
+	dsn := config.GetDatabaseConnectionString(host)
 
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -28,6 +27,8 @@ func InitDataBase() *sql.DB {
 	}
 
 	logger.SendToInfoLog("connected!!")
+
+	DB = db
 
 	return db
 }
