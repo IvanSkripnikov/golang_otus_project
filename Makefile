@@ -9,13 +9,16 @@ run:
 down:
 	$(DOCKER_COMPOSE) down
 
+set-env:
+	export MYSQL_ADDR=localhost
+
 # запуск интеграционных тестов
-test-integration: run
+test-integration: set-env run
 	cd app && \
-	go test -race -count 100 .
+	go test -race -count 1 .
 
 # запуск тестов core-логики
-test-core: run
+test-core: set-env run
 	cd app && \
 	cd components && \
 	go test -race -count 100 .

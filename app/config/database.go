@@ -14,7 +14,7 @@ func GetDatabaseConfig() models.DBConfig {
 
 		Protocol: Env("MYSQL_PROT", "tcp"),
 
-		Address: Env("MYSQL_ADDR", "localhost:3306"),
+		Address: Env("MYSQL_ADDR", "db") + ":3306",
 
 		Database: Env("MYSQL_DATABASE", "test"),
 	}
