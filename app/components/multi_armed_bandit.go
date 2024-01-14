@@ -11,7 +11,9 @@ func GetNeedBanner(allShows float64, bannersStatistics []models.BannerStats) int
 	var resultBannerID int
 
 	// получаем рейтинги по баннерам
+
 	rateBanners := GetBannerRatings(allShows, bannersStatistics)
+
 	resultBannerID = rateBanners[0].BannerID
 
 	return resultBannerID
@@ -28,9 +30,11 @@ func GetBannerRatings(allShows float64, bannersStatistics []models.BannerStats) 
 
 	for k, bannerStat := range bannersStatistics {
 		allShowsBanner := bannerStat.AllShowsBanner
+
 		allClickBanner := bannerStat.AllClickBanner
 
 		// находим средний рейтинг баннера
+
 		if allClickBanner == 0 || allShowsBanner == 0 {
 			averageRating = 0
 		} else {
@@ -38,6 +42,7 @@ func GetBannerRatings(allShows float64, bannersStatistics []models.BannerStats) 
 		}
 
 		// считаем рейтинг баннера
+
 		if allShowsBanner == 0 {
 			rate = 0
 		} else {
@@ -46,13 +51,15 @@ func GetBannerRatings(allShows float64, bannersStatistics []models.BannerStats) 
 
 		rating := models.Rating{
 			BannerID: bannerStat.BannerID,
-			Value:    rate,
+
+			Value: rate,
 		}
 
 		rateBanners[k] = rating
 	}
 
 	// сортируем итоговый набор рейтингов
+
 	sort.Slice(rateBanners, func(i, j int) bool {
 		return rateBanners[i].Value > rateBanners[j].Value
 	})

@@ -24,11 +24,17 @@ func SendEventToQueue(eventName string, bannerID, slotID, groupID int) {
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
+
 		"events-queue",
+
 		false,
+
 		false,
+
 		false,
+
 		false,
+
 		nil,
 	)
 
@@ -44,14 +50,21 @@ func SendEventToQueue(eventName string, bannerID, slotID, groupID int) {
 	}
 
 	err = ch.PublishWithContext(
+
 		context.Background(),
+
 		"",
+
 		q.Name,
+
 		false,
+
 		false,
+
 		amqp.Publishing{
 			ContentType: "text/plain",
-			Body:        body,
+
+			Body: body,
 		})
 
 	failOnError(err, "Failed to publish a message")

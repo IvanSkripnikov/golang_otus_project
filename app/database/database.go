@@ -19,6 +19,7 @@ func InitDataBase() *sql.DB {
 	logger.SendToInfoLog("connecting ...")
 
 	// get environment variables
+
 	dsn := config.GetDatabaseConnectionString()
 
 	db, err := sql.Open("mysql", dsn)
