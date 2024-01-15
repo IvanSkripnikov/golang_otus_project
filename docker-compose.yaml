@@ -49,4 +49,4 @@ networks:
     driver: bridge
 
 volumes:
-  db-data9:
+  db-data:
