@@ -27,7 +27,7 @@ services:
       - rabbitmq_go_net
     volumes:
       - type: volume
-        source: db-data9
+        source: db-data
         target: /var/lib/mysql
         volume:
           nocopy: true

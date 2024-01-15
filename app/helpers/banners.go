@@ -16,7 +16,7 @@ import (
 )
 
 func GetAllBanners(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	query := "SELECT * from banners"
 
@@ -55,7 +55,7 @@ func GetAllBanners(w http.ResponseWriter, _ *http.Request) {
 	if checkError(w, err) {
 		return
 	}
-	fmt.Println(buf.String())
+
 	writeSuccess(w, buf.String())
 }
 
@@ -106,7 +106,7 @@ func GetBanner(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	params, resultString := getParamsFromQueryString(r.URL.Path)
 
@@ -138,7 +138,7 @@ func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
 }
 
 func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	params, resultString := getParamsFromQueryString(r.URL.Path)
 
@@ -170,7 +170,7 @@ func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	params, resultString := getParamsFromQueryString(r.URL.Path)
 
@@ -224,7 +224,7 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 }
 
 func EventClick(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	params, resultString := getParamsFromQueryString(r.URL.Path)
 

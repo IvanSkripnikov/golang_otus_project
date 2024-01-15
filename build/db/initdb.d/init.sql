@@ -1,4 +1,4 @@
-CREATE DATABASE IF NOT EXISTS test;
+CREATE DATABASE IF NOT EXISTS test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE test;
 
 CREATE TABLE IF NOT EXISTS banners (
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS banners (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     active     BOOLEAN DEFAULT TRUE,
     PRIMARY KEY (id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO banners (title, body) VALUES
     ('moscow aged', 'Московское долголение'),
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS slots (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     active     BOOLEAN DEFAULT TRUE,
     PRIMARY KEY (id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO slots (title, body) VALUES
     ('Main slot', 'Слот вверху главного экрана'),
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS user_groups (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     active     BOOLEAN DEFAULT TRUE,
     PRIMARY KEY (id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO user_groups (title, body) VALUES
     ('women_0_18', 'Девочки'),
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS relations_banner_slot (
     slot_id    INTEGER,
     PRIMARY KEY (id),
     UNIQUE(banner_id, slot_id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO relations_banner_slot (banner_id, slot_id) VALUES
     (1, 1),
@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS events (
     group_id   INTEGER,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /**
   показываем баннеры 1 раз каждой группе (инициализация - дерганье за каждую ручку)
