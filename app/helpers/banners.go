@@ -55,7 +55,7 @@ func GetAllBanners(w http.ResponseWriter, _ *http.Request) {
 	if checkError(w, err) {
 		return
 	}
-
+	fmt.Println(buf.String())
 	writeSuccess(w, buf.String())
 }
 
