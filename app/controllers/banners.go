@@ -7,7 +7,7 @@ import (
 )
 
 func BannersHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setResponseHeader(w)
 
 	switch r.Method {
 	case http.MethodGet:
@@ -21,7 +21,7 @@ func BannersHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func BannerHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setResponseHeader(w)
 
 	switch r.Method {
 	case http.MethodGet:
@@ -35,7 +35,7 @@ func BannerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddBannerHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setResponseHeader(w)
 
 	switch r.Method {
 	case http.MethodPost:
@@ -49,7 +49,7 @@ func AddBannerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func RemoveBannerHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setResponseHeader(w)
 
 	switch r.Method {
 	case http.MethodPost:
@@ -63,7 +63,7 @@ func RemoveBannerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetBannerForShowHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setResponseHeader(w)
 
 	switch r.Method {
 	case http.MethodGet:
@@ -77,7 +77,7 @@ func GetBannerForShowHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ClickHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	setResponseHeader(w)
 
 	switch r.Method {
 	case http.MethodPost:
@@ -88,4 +88,8 @@ func ClickHandler(w http.ResponseWriter, r *http.Request) {
 
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
+}
+
+func setResponseHeader(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 }
