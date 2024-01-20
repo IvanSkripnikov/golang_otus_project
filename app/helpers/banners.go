@@ -60,6 +60,8 @@ func GetAllBanners(w http.ResponseWriter, _ *http.Request) {
 }
 
 func GetBanner(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+
 	var banner models.Banner
 
 	banner.ID, _ = getIDFromRequestString(r.URL.Path)
@@ -87,7 +89,7 @@ func GetBanner(w http.ResponseWriter, r *http.Request) {
 
 		w.WriteHeader(http.StatusNotFound)
 
-		fmt.Fprintf(w, fmt.Sprintf("{\"message\": \"Banner %s Not Found\"}", strconv.Itoa(banner.ID)))
+		fmt.Fprintf(w, "{\"message\": \"Banner "+strconv.Itoa(banner.ID)+" Not Found\"}")
 
 		return
 	}

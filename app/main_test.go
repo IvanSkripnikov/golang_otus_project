@@ -72,7 +72,7 @@ func TestBannerNotFound(t *testing.T) {
 
 	e := httpexpect.Default(t, server.URL)
 
-	e.GET("/banners/0").
+	e.GET("/banners/-1").
 		Expect().
 		Status(http.StatusNotFound).JSON().IsObject()
 }
