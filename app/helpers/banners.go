@@ -2,7 +2,9 @@ package helpers
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -122,6 +124,14 @@ func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// проверяем, есть ли такие слот или баннер в базе
+	checks := make(map[string]int, 2)
+	checks["banner"] = bannerID
+	checks["slot"] = slotID
+	if !checkExistsObjects(w, checks) {
+		return
+	}
+
 	query := "INSERT INTO relations_banner_slot (banner_id, slot_id) VALUES (?, ?)"
 
 	rows, err := database.DB.Query(query, bannerID, slotID)
@@ -154,6 +164,15 @@ func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// проверяем, есть ли такие слот или баннер в базе
+	checks := make(map[string]int, 2)
+	checks["banner"] = bannerID
+	checks["slot"] = slotID
+	fmt.Println(checks)
+	if !checkExistsObjects(w, checks) {
+		return
+	}
+
 	query := "DELETE FROM relations_banner_slot WHERE banner_id=? AND slot_id=?"
 
 	rows, err := database.DB.Query(query, bannerID, slotID)
@@ -183,6 +202,14 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 	if !okSlot || !okGroup || resultString != "" {
 		wrongParamsResponse(w)
 
+		return
+	}
+
+	// проверяем, есть ли такие группа или слот в базе
+	checks := make(map[string]int, 2)
+	checks["slot"] = slotID
+	checks["group"] = groupID
+	if !checkExistsObjects(w, checks) {
 		return
 	}
 
@@ -239,6 +266,15 @@ func EventClick(w http.ResponseWriter, r *http.Request) {
 	if !okSlot || !okGroup || !okBanner || resultString != "" {
 		wrongParamsResponse(w)
 
+		return
+	}
+
+	// проверяем, есть ли такие слот или баннер или группа в базе
+	checks := make(map[string]int, 3)
+	checks["banner"] = bannerID
+	checks["slot"] = slotID
+	checks["group"] = groupID
+	if !checkExistsObjects(w, checks) {
 		return
 	}
 
@@ -438,4 +474,79 @@ func getParamsFromQueryString(url string) (map[string]int, string) {
 	}
 
 	return resultMap, outMessage
+}
+
+func isExistsBanner(bannerID int) bool {
+	query := "SELECT * from banners WHERE id = ?"
+
+	return isExists(query, bannerID)
+}
+
+func isExistsSlot(slotID int) bool {
+	query := "SELECT * from slots WHERE id = ?"
+
+	return isExists(query, slotID)
+}
+
+func isExistsGroup(groupID int) bool {
+	query := "SELECT * from user_groups WHERE id = ?"
+
+	return isExists(query, groupID)
+}
+
+func isExists(query string, id int) bool {
+	rows, err := database.DB.Prepare(query)
+
+	if err != nil {
+		logger.SendToErrorLog(err.Error())
+
+		return false
+	}
+
+	defer rows.Close()
+
+	err = rows.QueryRow(id).Scan()
+
+	if err != nil && errors.Is(err, sql.ErrNoRows) {
+		return false
+	}
+
+	return true
+}
+
+func checkExistsObjects(w http.ResponseWriter, checks map[string]int) bool {
+	success := true
+	message := ""
+	for k, id := range checks {
+		if k == "banner" && !isExistsBanner(id) {
+			message = "{\"message\": \"Banner " + strconv.Itoa(id)
+			success = false
+			break
+		}
+
+		if k == "slot" && !isExistsSlot(id) {
+			message = "{\"message\": \"Slot " + strconv.Itoa(id)
+			success = false
+			break
+		}
+
+		if k == "group" && !isExistsGroup(id) {
+			message = "{\"message\": \"Group " + strconv.Itoa(id)
+			success = false
+			break
+		}
+	}
+
+	if !success {
+		message += " Not Found\"}"
+		logger.SendToErrorLog(message)
+
+		w.WriteHeader(http.StatusNotFound)
+
+		fmt.Fprint(w, message)
+
+		return false
+	}
+
+	return true
 }

@@ -101,7 +101,7 @@ func TestBanners(t *testing.T) {
 	e.HEAD("/banners").Expect().Status(http.StatusMethodNotAllowed)
 }
 
-func TestGetBannerForShow(t *testing.T) {
+func TestGetBannerForShowSuccess(t *testing.T) {
 	countBefore := helpers.GetAllEvents("show")
 
 	handler := GetHTTPHandler()
@@ -133,7 +133,35 @@ func TestGetBannerForShow(t *testing.T) {
 	e.HEAD("/get_banner_for_show/slot=1&group=1").Expect().Status(http.StatusMethodNotAllowed)
 }
 
-func TestEventClick(t *testing.T) {
+func TestGetBannerForShowFailureWrongSlot(t *testing.T) {
+	handler := GetHTTPHandler()
+
+	server := httptest.NewServer(handler)
+
+	defer server.Close()
+
+	e := httpexpect.Default(t, server.URL)
+
+	e.GET("/get_banner_for_show/slot=-1&group=1").
+		Expect().
+		Status(http.StatusNotFound).JSON().IsObject()
+}
+
+func TestGetBannerForShowFailureWrongGroup(t *testing.T) {
+	handler := GetHTTPHandler()
+
+	server := httptest.NewServer(handler)
+
+	defer server.Close()
+
+	e := httpexpect.Default(t, server.URL)
+
+	e.GET("/get_banner_for_show/slot=1&group=-1").
+		Expect().
+		Status(http.StatusNotFound).JSON().IsObject()
+}
+
+func TestEventClickSuccess(t *testing.T) {
 	countBefore := helpers.GetAllEvents("click")
 
 	handler := GetHTTPHandler()
@@ -165,7 +193,49 @@ func TestEventClick(t *testing.T) {
 	e.HEAD("/event_click/slot=1&group=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
 }
 
-func TestRemoveBanner(t *testing.T) {
+func TestEventClickFailureWrongSlot(t *testing.T) {
+	handler := GetHTTPHandler()
+
+	server := httptest.NewServer(handler)
+
+	defer server.Close()
+
+	e := httpexpect.Default(t, server.URL)
+
+	e.POST("/event_click/slot=-1&group=1&banner=1").
+		Expect().
+		Status(http.StatusNotFound).JSON().IsObject()
+}
+
+func TestEventClickFailureWrongGroup(t *testing.T) {
+	handler := GetHTTPHandler()
+
+	server := httptest.NewServer(handler)
+
+	defer server.Close()
+
+	e := httpexpect.Default(t, server.URL)
+
+	e.POST("/event_click/slot=1&group=-1&banner=1").
+		Expect().
+		Status(http.StatusNotFound).JSON().IsObject()
+}
+
+func TestEventClickFailureWrongBanner(t *testing.T) {
+	handler := GetHTTPHandler()
+
+	server := httptest.NewServer(handler)
+
+	defer server.Close()
+
+	e := httpexpect.Default(t, server.URL)
+
+	e.POST("/event_click/slot=1&group=1&banner=-1").
+		Expect().
+		Status(http.StatusNotFound).JSON().IsObject()
+}
+
+func TestRemoveBannerSuccess(t *testing.T) {
 	handler := GetHTTPHandler()
 
 	server := httptest.NewServer(handler)
@@ -189,7 +259,35 @@ func TestRemoveBanner(t *testing.T) {
 	e.HEAD("/remove_banner_from_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
 }
 
-func TestAddBanner(t *testing.T) {
+func TestRemoveBannerFailureWrongBanner(t *testing.T) {
+	handler := GetHTTPHandler()
+
+	server := httptest.NewServer(handler)
+
+	defer server.Close()
+
+	e := httpexpect.Default(t, server.URL)
+
+	e.POST("/remove_banner_from_slot/slot=1&banner=-1").
+		Expect().
+		Status(http.StatusNotFound).JSON().IsObject()
+}
+
+func TestRemoveBannerFailureWrongSlot(t *testing.T) {
+	handler := GetHTTPHandler()
+
+	server := httptest.NewServer(handler)
+
+	defer server.Close()
+
+	e := httpexpect.Default(t, server.URL)
+
+	e.POST("/remove_banner_from_slot/slot=-1&banner=1").
+		Expect().
+		Status(http.StatusNotFound).JSON().IsObject()
+}
+
+func TestAddBannerSuccess(t *testing.T) {
 	handler := GetHTTPHandler()
 
 	server := httptest.NewServer(handler)
@@ -211,4 +309,32 @@ func TestAddBanner(t *testing.T) {
 	e.DELETE("/add_banner_to_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
 
 	e.HEAD("/add_banner_to_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+}
+
+func TestAddBannerFailureWrongBanner(t *testing.T) {
+	handler := GetHTTPHandler()
+
+	server := httptest.NewServer(handler)
+
+	defer server.Close()
+
+	e := httpexpect.Default(t, server.URL)
+
+	e.POST("/add_banner_to_slot/slot=1&banner=-1").
+		Expect().
+		Status(http.StatusNotFound).JSON().IsObject()
+}
+
+func TestAddBannerFailureWrongSlot(t *testing.T) {
+	handler := GetHTTPHandler()
+
+	server := httptest.NewServer(handler)
+
+	defer server.Close()
+
+	e := httpexpect.Default(t, server.URL)
+
+	e.POST("/add_banner_to_slot/slot=-1&banner=1").
+		Expect().
+		Status(http.StatusNotFound).JSON().IsObject()
 }
