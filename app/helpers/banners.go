@@ -87,7 +87,7 @@ func GetBanner(w http.ResponseWriter, r *http.Request) {
 
 		w.WriteHeader(http.StatusNotFound)
 
-		fmt.Fprint(w, "{ \"message\": \"Not Found\"}")
+		fmt.Fprintf(w, fmt.Sprintf("{\"message\": \"Banner %s Not Found\"}", strconv.Itoa(banner.ID)))
 
 		return
 	}

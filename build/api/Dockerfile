@@ -7,6 +7,7 @@ RUN apk update && \
     apk add --no-cache alpine-conf
 
 ADD ./app /go/src/app
+ADD ./app/log /go/log
 
 RUN cd /go/src/app && \
     go install github.com/IvanSkripnikov/golang_otus_project

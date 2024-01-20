@@ -39,7 +39,7 @@ func TestRoot(t *testing.T) {
 	}
 }
 
-func TestBanner(t *testing.T) {
+func TestBannerSuccess(t *testing.T) {
 	handler := GetHTTPHandler()
 
 	server := httptest.NewServer(handler)
@@ -61,6 +61,20 @@ func TestBanner(t *testing.T) {
 	e.DELETE("/banners/1").Expect().Status(http.StatusMethodNotAllowed)
 
 	e.HEAD("/banners/1").Expect().Status(http.StatusMethodNotAllowed)
+}
+
+func TestBannerNotFound(t *testing.T) {
+	handler := GetHTTPHandler()
+
+	server := httptest.NewServer(handler)
+
+	defer server.Close()
+
+	e := httpexpect.Default(t, server.URL)
+
+	e.GET("/banners/0").
+		Expect().
+		Status(http.StatusNotFound).JSON().IsObject()
 }
 
 func TestBanners(t *testing.T) {
