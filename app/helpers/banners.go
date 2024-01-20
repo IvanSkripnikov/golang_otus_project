@@ -496,7 +496,6 @@ func isExistsGroup(groupID int) bool {
 
 func isExists(query string, id int) bool {
 	rows, err := database.DB.Prepare(query)
-
 	if err != nil {
 		logger.SendToErrorLog(err.Error())
 
