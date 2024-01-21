@@ -126,9 +126,19 @@ func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query := "INSERT INTO relations_banner_slot (banner_id, slot_id) VALUES (?, ?)"
+	// чистим все связи до вставки
+	query := "DELETE FROM relations_banner_slot WHERE banner_id=? AND slot_id=?"
 
 	rows, err := database.DB.Query(query, bannerID, slotID)
+
+	if checkError(w, err) {
+		return
+	}
+
+	// создаём новую связь
+	query = "INSERT INTO relations_banner_slot (banner_id, slot_id) VALUES (?, ?)"
+
+	rows, err = database.DB.Query(query, bannerID, slotID)
 
 	if checkError(w, err) {
 		return
