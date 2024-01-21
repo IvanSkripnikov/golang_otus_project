@@ -203,6 +203,18 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// проверить на существование баннеров для слота - если нет привязанных баннеров, вернуть 404
+	if !hasBannersInSlot(slotID) {
+		message := "{\"message\": \"There is no assigned banners for slot " + strconv.Itoa(slotID) + " \"}"
+		logger.SendToErrorLog(message)
+
+		w.WriteHeader(http.StatusNotFound)
+
+		fmt.Fprint(w, message)
+
+		return
+	}
+
 	allShows := float64(GetAllEvents("show"))
 
 	bannersStatistics := getBannersStatistics(slotID, groupID)
@@ -536,4 +548,29 @@ func checkExistsObjects(w http.ResponseWriter, checks map[string]int) bool {
 	}
 
 	return true
+}
+
+func hasBannersInSlot(slotID int) bool {
+	query := "SELECT COUNT(*) as cnt from relations_banner_slot WHERE slot_id = ?"
+
+	rows, err := database.DB.Query(query, slotID)
+	if err != nil {
+		return false
+	}
+
+	defer func() {
+		_ = rows.Close()
+
+		_ = rows.Err()
+	}()
+
+	count := 0
+
+	for rows.Next() {
+		if err = rows.Scan(&count); err != nil {
+			return false
+		}
+	}
+
+	return count > 0
 }

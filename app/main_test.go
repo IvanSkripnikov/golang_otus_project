@@ -133,6 +133,20 @@ func TestGetBannerForShowSuccess(t *testing.T) {
 	e.HEAD("/get_banner_for_show/slot=1&group=1").Expect().Status(http.StatusMethodNotAllowed)
 }
 
+func TestGetBannerForShowFailureNoAssignedBannersForSlot(t *testing.T) {
+	handler := GetHTTPHandler()
+
+	server := httptest.NewServer(handler)
+
+	defer server.Close()
+
+	e := httpexpect.Default(t, server.URL)
+
+	e.GET("/get_banner_for_show/slot=2&group=1").
+		Expect().
+		Status(http.StatusNotFound).JSON().IsObject()
+}
+
 func TestGetBannerForShowFailureWrongSlot(t *testing.T) {
 	handler := GetHTTPHandler()
 

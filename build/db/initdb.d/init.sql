@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS relations_banner_slot (
     UNIQUE(banner_id, slot_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO relations_banner_slot (banner_id, slot_id) VALUES
+INSERT INTO relations_banner_slot (slot_id, banner_id) VALUES
     (1, 1),
     (1, 7),
     (1, 8),
@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS events (
 /**
   показываем баннеры 1 раз каждой группе (инициализация - дерганье за каждую ручку)
  */
-INSERT INTO `events` (type, banner_id, slot_id, group_id) VALUES
+INSERT INTO events (type, banner_id, slot_id, group_id) VALUES
     /** первый слот*/
     ('show', 1, 1, 1), ('show', 3, 1, 1), ('show', 5, 1, 1),
     ('show', 1, 1, 2), ('show', 3, 1, 2), ('show', 5, 1, 2),
