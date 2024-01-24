@@ -215,7 +215,7 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 
 	// проверить на существование баннеров для слота - если нет привязанных баннеров, вернуть 404
 	if !hasBannersInSlot(slotID) {
-		message := "{\"message\": \"There is no assigned banners for slot " + strconv.Itoa(slotID) + " \"}"
+		message := "{\"message\": \"There is no assigned banners for slot " + strconv.Itoa(slotID) + "\"}"
 		logger.SendToErrorLog(message)
 
 		w.WriteHeader(http.StatusNotFound)
