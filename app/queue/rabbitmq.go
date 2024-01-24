@@ -11,7 +11,11 @@ import (
 )
 
 func SendEventToQueue(eventName string, bannerID, slotID, groupID int) {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@rabbitmq:5672/")
+
+	if conn == nil {
+		return
+	}
 
 	failOnError(err, "Failed to connect to RabbitMQ")
 
