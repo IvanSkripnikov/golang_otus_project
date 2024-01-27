@@ -185,7 +185,8 @@ func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !checkExistsRelationSlotBanner(slotID, bannerID) {
-		message := "{\"message\": \"Banner " + strconv.Itoa(bannerID) + " and Slot " + strconv.Itoa(slotID) + " Not Found\"}"
+		message := "{\"message\": \"Relation banner " + strconv.Itoa(bannerID)
+		message += " and slot " + strconv.Itoa(slotID) + " not found\"}"
 		logger.SendToErrorLog(message)
 
 		w.WriteHeader(http.StatusNotFound)
