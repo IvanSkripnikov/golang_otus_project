@@ -89,7 +89,6 @@ CREATE TABLE IF NOT EXISTS relations_banner_slot (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO relations_banner_slot (slot_id, banner_id) VALUES
-    (1, 1),
     (1, 7),
     (1, 8),
     (1, 9),
