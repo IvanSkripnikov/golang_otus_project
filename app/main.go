@@ -11,10 +11,8 @@ import (
 )
 
 type route struct {
-	method string
-
-	regex *regexp.Regexp
-
+	method  string
+	regex   *regexp.Regexp
 	handler http.HandlerFunc
 }
 
@@ -54,19 +52,19 @@ func Serve(w http.ResponseWriter, r *http.Request) {
 
 	found := false
 
-	for _, route := range routes {
-		matches := route.regex.FindStringSubmatch(r.URL.Path)
+	for _, routeUnit := range routes {
+		matches := routeUnit.regex.FindStringSubmatch(r.URL.Path)
 
 		if len(matches) > 0 {
-			if r.Method != route.method {
-				allow = append(allow, route.method)
+			if r.Method != routeUnit.method {
+				allow = append(allow, routeUnit.method)
 
 				continue
 			}
 
 			found = true
 
-			route.handler(w, r)
+			routeUnit.handler(w, r)
 		}
 	}
 
@@ -90,8 +88,8 @@ func Serve(w http.ResponseWriter, r *http.Request) {
 func GetHTTPHandler() *http.ServeMux {
 	httpHandler := http.NewServeMux()
 
-	for _, route := range routes {
-		httpHandler.HandleFunc(handleRegexp(route.regex), route.handler)
+	for _, routeUnit := range routes {
+		httpHandler.HandleFunc(handleRegexp(routeUnit.regex), routeUnit.handler)
 	}
 
 	return httpHandler

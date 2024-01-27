@@ -119,14 +119,19 @@ func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// проверяем, есть ли такие слот или баннер в базе
+
 	checks := make(map[string]int, 2)
+
 	checks["banner"] = bannerID
+
 	checks["slot"] = slotID
+
 	if !checkExistsObjects(w, checks) {
 		return
 	}
 
 	// чистим все связи до вставки
+
 	query := "DELETE FROM relations_banner_slot WHERE banner_id=? AND slot_id=?"
 
 	rows, err := database.DB.Query(query, bannerID, slotID)
@@ -136,6 +141,7 @@ func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// создаём новую связь
+
 	query = "INSERT INTO relations_banner_slot (banner_id, slot_id) VALUES (?, ?)"
 
 	rows, err = database.DB.Query(query, bannerID, slotID)
@@ -167,10 +173,15 @@ func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// проверяем, есть ли такие слот или баннер в базе
+
 	checks := make(map[string]int, 2)
+
 	checks["banner"] = bannerID
+
 	checks["slot"] = slotID
+
 	fmt.Println(checks)
+
 	if !checkExistsObjects(w, checks) {
 		return
 	}
@@ -206,16 +217,22 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// проверяем, есть ли такие группа или слот в базе
+
 	checks := make(map[string]int, 2)
+
 	checks["slot"] = slotID
+
 	checks["group"] = groupID
+
 	if !checkExistsObjects(w, checks) {
 		return
 	}
 
 	// проверить на существование баннеров для слота - если нет привязанных баннеров, вернуть 404
+
 	if !hasBannersInSlot(slotID) {
 		message := "{\"message\": \"There is no assigned banners for slot " + strconv.Itoa(slotID) + "\"}"
+
 		logger.SendToErrorLog(message)
 
 		w.WriteHeader(http.StatusNotFound)
@@ -280,10 +297,15 @@ func EventClick(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// проверяем, есть ли такие слот или баннер или группа в базе
+
 	checks := make(map[string]int, 3)
+
 	checks["banner"] = bannerID
+
 	checks["slot"] = slotID
+
 	checks["group"] = groupID
+
 	if !checkExistsObjects(w, checks) {
 		return
 	}
@@ -525,29 +547,38 @@ func isExists(query string, id int) bool {
 
 func checkExistsObjects(w http.ResponseWriter, checks map[string]int) bool {
 	success := true
+
 	message := ""
+
 	for k, id := range checks {
 		if k == "banner" && !isExistsBanner(id) {
 			message = "{\"message\": \"Banner " + strconv.Itoa(id)
+
 			success = false
+
 			break
 		}
 
 		if k == "slot" && !isExistsSlot(id) {
 			message = "{\"message\": \"Slot " + strconv.Itoa(id)
+
 			success = false
+
 			break
 		}
 
 		if k == "group" && !isExistsGroup(id) {
 			message = "{\"message\": \"Group " + strconv.Itoa(id)
+
 			success = false
+
 			break
 		}
 	}
 
 	if !success {
 		message += " Not Found\"}"
+
 		logger.SendToErrorLog(message)
 
 		w.WriteHeader(http.StatusNotFound)
