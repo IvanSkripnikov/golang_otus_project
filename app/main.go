@@ -19,19 +19,19 @@ type route struct {
 }
 
 var routes = []route{
-	newRoute("GET", "/", controllers.HelloPageHandler),
+	newRoute(http.MethodGet, "/", controllers.HelloPageHandler),
 
-	newRoute("GET", "/banners", controllers.BannersHandler),
+	newRoute(http.MethodGet, "/banners", controllers.BannersHandler),
 
-	newRoute("GET", "/banners/([0-9]+)", controllers.BannerHandler),
+	newRoute(http.MethodGet, "/banners/([0-9]+)", controllers.BannerHandler),
 
-	newRoute("POST", "/add_banner_to_slot/([\\S]+)", controllers.AddBannerHandler),
+	newRoute(http.MethodPost, "/add_banner_to_slot/([\\S]+)", controllers.AddBannerHandler),
 
-	newRoute("POST", "/remove_banner_from_slot/([\\S]+)", controllers.RemoveBannerHandler),
+	newRoute(http.MethodDelete, "/remove_banner_from_slot/([\\S]+)", controllers.RemoveBannerHandler),
 
-	newRoute("GET", "/get_banner_for_show/([\\S]+)", controllers.GetBannerForShowHandler),
+	newRoute(http.MethodGet, "/get_banner_for_show/([\\S]+)", controllers.GetBannerForShowHandler),
 
-	newRoute("POST", "/event_click/([\\S]+)", controllers.ClickHandler),
+	newRoute(http.MethodPost, "/event_click/([\\S]+)", controllers.ClickHandler),
 }
 
 func initHTTPServer() {

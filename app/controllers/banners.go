@@ -52,7 +52,7 @@ func RemoveBannerHandler(w http.ResponseWriter, r *http.Request) {
 	setResponseHeader(w)
 
 	switch r.Method {
-	case http.MethodPost:
+	case http.MethodDelete:
 
 		helpers.RemoveBannerFromSlot(w, r)
 

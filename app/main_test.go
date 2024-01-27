@@ -258,7 +258,7 @@ func TestRemoveBannerSuccess(t *testing.T) {
 
 	e := httpexpect.Default(t, server.URL)
 
-	e.POST("/remove_banner_from_slot/slot=1&banner=1").
+	e.DELETE("/remove_banner_from_slot/slot=1&banner=1").
 		Expect().
 		Status(http.StatusOK).JSON()
 
@@ -268,7 +268,7 @@ func TestRemoveBannerSuccess(t *testing.T) {
 
 	e.PATCH("/remove_banner_from_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
 
-	e.DELETE("/remove_banner_from_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.POST("/remove_banner_from_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
 
 	e.HEAD("/remove_banner_from_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
 }
@@ -282,7 +282,7 @@ func TestRemoveBannerFailureWrongBanner(t *testing.T) {
 
 	e := httpexpect.Default(t, server.URL)
 
-	e.POST("/remove_banner_from_slot/slot=1&banner=-1").
+	e.DELETE("/remove_banner_from_slot/slot=1&banner=-1").
 		Expect().
 		Status(http.StatusNotFound).JSON().IsObject()
 }
@@ -296,7 +296,7 @@ func TestRemoveBannerFailureWrongSlot(t *testing.T) {
 
 	e := httpexpect.Default(t, server.URL)
 
-	e.POST("/remove_banner_from_slot/slot=-1&banner=1").
+	e.DELETE("/remove_banner_from_slot/slot=-1&banner=1").
 		Expect().
 		Status(http.StatusNotFound).JSON().IsObject()
 }
