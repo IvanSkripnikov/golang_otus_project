@@ -258,6 +258,11 @@ func TestRemoveBannerSuccess(t *testing.T) {
 
 	e := httpexpect.Default(t, server.URL)
 
+	// сперва добавляем баннер, чтобы потом его удалить
+	e.POST("/add_banner_to_slot/slot=1&banner=1").
+		Expect().
+		Status(http.StatusOK).JSON()
+
 	e.DELETE("/remove_banner_from_slot/slot=1&banner=1").
 		Expect().
 		Status(http.StatusOK).JSON()
@@ -314,6 +319,11 @@ func TestAddBannerSuccess(t *testing.T) {
 		Expect().
 		Status(http.StatusOK).JSON()
 
+	// убираем добавленный баннер
+	e.DELETE("/remove_banner_from_slot/slot=1&banner=1").
+		Expect().
+		Status(http.StatusOK).JSON()
+
 	e.GET("/add_banner_to_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
 
 	e.PUT("/add_banner_to_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
@@ -351,4 +361,29 @@ func TestAddBannerFailureWrongSlot(t *testing.T) {
 	e.POST("/add_banner_to_slot/slot=-1&banner=1").
 		Expect().
 		Status(http.StatusNotFound).JSON().IsObject()
+}
+
+func TestAddBannerFailureExistsRelation(t *testing.T) {
+	handler := GetHTTPHandler()
+
+	server := httptest.NewServer(handler)
+
+	defer server.Close()
+
+	e := httpexpect.Default(t, server.URL)
+
+	// добавляем первый баннер
+	e.POST("/add_banner_to_slot/slot=1&banner=1").
+		Expect().
+		Status(http.StatusOK).JSON().IsObject()
+
+	// пробуем добавить такой же
+	e.POST("/add_banner_to_slot/slot=1&banner=1").
+		Expect().
+		Status(http.StatusUnprocessableEntity).JSON().IsObject()
+
+	// убираем добавленный баннер
+	e.DELETE("/remove_banner_from_slot/slot=1&banner=1").
+		Expect().
+		Status(http.StatusOK).JSON().IsObject()
 }

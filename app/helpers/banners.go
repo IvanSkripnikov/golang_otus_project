@@ -87,7 +87,7 @@ func GetBanner(w http.ResponseWriter, r *http.Request) {
 
 		w.WriteHeader(http.StatusNotFound)
 
-		fmt.Fprintf(w, "{\"message\": \"Banner "+strconv.Itoa(banner.ID)+" Not Found\"}")
+		fmt.Fprintf(w, "{\"message\": \"Banner with id "+strconv.Itoa(banner.ID)+" not found\"}")
 
 		return
 	}
@@ -121,30 +121,29 @@ func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
 	// проверяем, есть ли такие слот или баннер в базе
 
 	checks := make(map[string]int, 2)
-
 	checks["banner"] = bannerID
-
 	checks["slot"] = slotID
 
 	if !checkExistsObjects(w, checks) {
 		return
 	}
+	if checkExistsRelationSlotBanner(slotID, bannerID) {
+		message := "{\"message\": \"Attention: Banner " + strconv.Itoa(bannerID) + " and Slot "
+		message += strconv.Itoa(slotID) + " relation already exists\"}"
+		logger.SendToErrorLog(message)
 
-	// чистим все связи до вставки
+		w.WriteHeader(http.StatusUnprocessableEntity)
 
-	query := "DELETE FROM relations_banner_slot WHERE banner_id=? AND slot_id=?"
+		fmt.Fprint(w, message)
 
-	rows, err := database.DB.Query(query, bannerID, slotID)
-
-	if checkError(w, err) {
 		return
 	}
 
 	// создаём новую связь
 
-	query = "INSERT INTO relations_banner_slot (banner_id, slot_id) VALUES (?, ?)"
+	query := "INSERT INTO relations_banner_slot (banner_id, slot_id) VALUES (?, ?)"
 
-	rows, err = database.DB.Query(query, bannerID, slotID)
+	rows, err := database.DB.Query(query, bannerID, slotID)
 
 	if checkError(w, err) {
 		return
@@ -183,6 +182,16 @@ func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(checks)
 
 	if !checkExistsObjects(w, checks) {
+		return
+	}
+	if !checkExistsRelationSlotBanner(slotID, bannerID) {
+		message := "{\"message\": \"Banner " + strconv.Itoa(bannerID) + " and Slot " + strconv.Itoa(slotID) + " Not Found\"}"
+		logger.SendToErrorLog(message)
+
+		w.WriteHeader(http.StatusNotFound)
+
+		fmt.Fprint(w, message)
+
 		return
 	}
 
@@ -614,4 +623,25 @@ func hasBannersInSlot(slotID int) bool {
 	}
 
 	return count > 0
+}
+
+func checkExistsRelationSlotBanner(slotID, bannerID int) bool {
+	query := "SELECT * FROM relations_banner_slot WHERE slot_id = ? AND banner_id = ?"
+
+	rows, err := database.DB.Prepare(query)
+	if err != nil {
+		logger.SendToErrorLog(err.Error())
+
+		return false
+	}
+
+	defer rows.Close()
+
+	err = rows.QueryRow(slotID, bannerID).Scan()
+
+	if err != nil && errors.Is(err, sql.ErrNoRows) {
+		return false
+	}
+
+	return true
 }
