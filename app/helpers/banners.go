@@ -62,7 +62,7 @@ func GetAllBanners(w http.ResponseWriter, _ *http.Request) {
 func GetBanner(w http.ResponseWriter, r *http.Request) {
 	var banner models.Banner
 
-	banner.ID, _ = getIDFromRequestString(r.URL.Path)
+	banner.ID, _ = getIDFromRequestString(strings.TrimSpace(r.URL.Path))
 
 	if banner.ID == 0 {
 		wrongParamsResponse(w)
@@ -106,7 +106,7 @@ func GetBanner(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
-	params, resultString := getParamsFromQueryString(r.URL.Path)
+	params, resultString := getParamsFromQueryString(strings.TrimSpace(r.URL.Path))
 
 	slotID, okSlot := params["slot"]
 
@@ -159,7 +159,7 @@ func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
 }
 
 func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request) {
-	params, resultString := getParamsFromQueryString(r.URL.Path)
+	params, resultString := getParamsFromQueryString(strings.TrimSpace(r.URL.Path))
 
 	slotID, okSlot := params["slot"]
 
@@ -214,7 +214,7 @@ func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
-	params, resultString := getParamsFromQueryString(r.URL.Path)
+	params, resultString := getParamsFromQueryString(strings.TrimSpace(r.URL.Path))
 
 	slotID, okSlot := params["slot"]
 
@@ -292,7 +292,7 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 }
 
 func EventClick(w http.ResponseWriter, r *http.Request) {
-	params, resultString := getParamsFromQueryString(r.URL.Path)
+	params, resultString := getParamsFromQueryString(strings.TrimSpace(r.URL.Path))
 
 	slotID, okSlot := params["slot"]
 

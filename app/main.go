@@ -53,7 +53,7 @@ func Serve(w http.ResponseWriter, r *http.Request) {
 	found := false
 
 	for _, routeUnit := range routes {
-		matches := routeUnit.regex.FindStringSubmatch(r.URL.Path)
+		matches := routeUnit.regex.FindStringSubmatch(strings.TrimSpace(r.URL.Path))
 
 		if len(matches) > 0 {
 			if r.Method != routeUnit.method {
