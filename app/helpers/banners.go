@@ -319,6 +319,17 @@ func EventClick(w http.ResponseWriter, r *http.Request) {
 	if !checkExistsObjects(w, checks) {
 		return
 	}
+	if !checkExistsRelationSlotBanner(slotID, bannerID) {
+		message := "{\"message\": \"Relation banner " + strconv.Itoa(bannerID)
+		message += " and slot " + strconv.Itoa(slotID) + " is not found\"}"
+		logger.SendToErrorLog(message)
+
+		w.WriteHeader(http.StatusNotFound)
+
+		fmt.Fprint(w, message)
+
+		return
+	}
 
 	query := "INSERT INTO events (type, banner_id, slot_id, group_id) VALUES (?, ?, ?, ?)"
 

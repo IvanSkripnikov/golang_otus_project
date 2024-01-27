@@ -186,7 +186,7 @@ func TestEventClickSuccess(t *testing.T) {
 
 	e := httpexpect.Default(t, server.URL)
 
-	e.POST("/event_click/slot=1&group=1&banner=1").
+	e.POST("/event_click/slot=3&group=1&banner=1").
 		Expect().
 		Status(http.StatusOK)
 
@@ -245,6 +245,20 @@ func TestEventClickFailureWrongBanner(t *testing.T) {
 	e := httpexpect.Default(t, server.URL)
 
 	e.POST("/event_click/slot=1&group=1&banner=-1").
+		Expect().
+		Status(http.StatusNotFound).JSON().IsObject()
+}
+
+func TestEventClickFailureWrongPairSlotBanner(t *testing.T) {
+	handler := GetHTTPHandler()
+
+	server := httptest.NewServer(handler)
+
+	defer server.Close()
+
+	e := httpexpect.Default(t, server.URL)
+
+	e.POST("/event_click/slot=1&group=1&banner=1").
 		Expect().
 		Status(http.StatusNotFound).JSON().IsObject()
 }
