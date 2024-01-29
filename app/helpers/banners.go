@@ -486,11 +486,11 @@ func writeSuccess(w http.ResponseWriter, message string) {
 }
 
 func wrongParamsResponse(w http.ResponseWriter) {
-	resultString := "{\"message\": \"Invalid request GetHandler\"}"
+	w.WriteHeader(http.StatusBadRequest)
+
+	resultString := "{\"message\": \"Bad request\"}"
 
 	fmt.Fprint(w, resultString)
-
-	w.WriteHeader(http.StatusBadRequest)
 }
 
 func getIDFromRequestString(url string) (int, error) {
@@ -501,6 +501,8 @@ func getIDFromRequestString(url string) (int, error) {
 
 func getParamsFromQueryString(url string) (map[string]int, string) {
 	resultMap := map[string]int{}
+
+	var err error
 
 	outMessage := ""
 
@@ -523,7 +525,11 @@ func getParamsFromQueryString(url string) (map[string]int, string) {
 			return resultMap, outMessage
 		}
 
-		resultMap[pair[0]], _ = strconv.Atoi(pair[1])
+		resultMap[pair[0]], err = strconv.Atoi(pair[1])
+
+		if err != nil {
+			outMessage = fmt.Sprintf("Wrong parameter %s. Details %s", pair[0], err)
+		}
 	}
 
 	return resultMap, outMessage

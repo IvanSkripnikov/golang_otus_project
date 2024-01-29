@@ -320,6 +320,20 @@ func TestRemoveBannerFailureWrongSlot(t *testing.T) {
 		Status(http.StatusNotFound).JSON().IsObject()
 }
 
+func TestRemoveBannerFailureBadRequest(t *testing.T) {
+	handler := GetHTTPHandler()
+
+	server := httptest.NewServer(handler)
+
+	defer server.Close()
+
+	e := httpexpect.Default(t, server.URL)
+
+	e.DELETE("/remove_banner_from_slot/banner=asdsa&slot=asdas").
+		Expect().
+		Status(http.StatusBadRequest).JSON().IsObject()
+}
+
 func TestAddBannerSuccess(t *testing.T) {
 	handler := GetHTTPHandler()
 
