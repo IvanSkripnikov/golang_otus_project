@@ -109,6 +109,10 @@ func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
 	var p models.Params
 
 	err := json.NewDecoder(r.Body).Decode(&p)
+	if err != nil {
+		wrongParamsResponse(w)
+		return
+	}
 
 	slotID, errMsg := handlePostParams(p.Slot)
 	if errMsg != "" {
@@ -298,6 +302,10 @@ func EventClick(w http.ResponseWriter, r *http.Request) {
 	var p models.Params
 
 	err := json.NewDecoder(r.Body).Decode(&p)
+	if err != nil {
+		wrongParamsResponse(w)
+		return
+	}
 
 	slotID, errMsg := handlePostParams(p.Slot)
 	if errMsg != "" {
