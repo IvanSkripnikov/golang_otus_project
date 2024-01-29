@@ -106,15 +106,18 @@ func GetBanner(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddBannerToSlot(w http.ResponseWriter, r *http.Request) {
-	params, resultString := getParamsFromQueryString(strings.TrimSpace(r.URL.Path))
+	var p models.Params
 
-	slotID, okSlot := params["slot"]
+	err := json.NewDecoder(r.Body).Decode(&p)
 
-	bannerID, okBanner := params["banner"]
-
-	if !okSlot || !okBanner || resultString != "" {
+	slotID, errMsg := handlePostParams(p.Slot)
+	if errMsg != "" {
 		wrongParamsResponse(w)
-
+		return
+	}
+	bannerID, errMsg := handlePostParams(p.Banner)
+	if errMsg != "" {
+		wrongParamsResponse(w)
 		return
 	}
 
@@ -292,17 +295,23 @@ func GetBannerForShow(w http.ResponseWriter, r *http.Request) {
 }
 
 func EventClick(w http.ResponseWriter, r *http.Request) {
-	params, resultString := getParamsFromQueryString(strings.TrimSpace(r.URL.Path))
+	var p models.Params
 
-	slotID, okSlot := params["slot"]
+	err := json.NewDecoder(r.Body).Decode(&p)
 
-	groupID, okGroup := params["group"]
-
-	bannerID, okBanner := params["banner"]
-
-	if !okSlot || !okGroup || !okBanner || resultString != "" {
+	slotID, errMsg := handlePostParams(p.Slot)
+	if errMsg != "" {
 		wrongParamsResponse(w)
-
+		return
+	}
+	bannerID, errMsg := handlePostParams(p.Banner)
+	if errMsg != "" {
+		wrongParamsResponse(w)
+		return
+	}
+	groupID, errMsg := handlePostParams(p.Group)
+	if errMsg != "" {
+		wrongParamsResponse(w)
 		return
 	}
 
@@ -662,4 +671,25 @@ func checkExistsRelationSlotBanner(slotID, bannerID int) bool {
 	}
 
 	return true
+}
+
+func handlePostParams(value interface{}) (int, string) {
+	var id int
+	var errMsg string
+	switch t := value.(type) {
+	case int:
+		id = t
+	case float64:
+		id = int(t)
+	case string:
+		var err error
+		id, err = strconv.Atoi(t)
+		if err != nil {
+			errMsg = "Unable to convert string"
+		}
+	default:
+		errMsg = "Unknown format"
+	}
+
+	return id, errMsg
 }

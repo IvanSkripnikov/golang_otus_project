@@ -33,3 +33,9 @@ type Message struct {
 	SlotID   int
 	GroupID  int
 }
+
+type Params struct {
+	Slot   interface{}
+	Banner interface{}
+	Group  interface{}
+}

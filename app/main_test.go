@@ -186,7 +186,13 @@ func TestEventClickSuccess(t *testing.T) {
 
 	e := httpexpect.Default(t, server.URL)
 
-	e.POST("/event_click/slot=3&group=1&banner=1").
+	params := map[string]interface{}{
+		"slot":   3,
+		"banner": 1,
+		"group":  1,
+	}
+
+	e.POST("/event_click").WithJSON(params).
 		Expect().
 		Status(http.StatusOK)
 
@@ -196,15 +202,20 @@ func TestEventClickSuccess(t *testing.T) {
 		t.Errorf("Not increment banner shows!")
 	}
 
-	e.GET("/event_click/slot=1&group=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.GET("/event_click").WithJSON(params).
+		Expect().Status(http.StatusMethodNotAllowed)
 
-	e.PUT("/event_click/slot=1&group=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.PUT("/event_click").WithJSON(params).
+		Expect().Status(http.StatusMethodNotAllowed)
 
-	e.PATCH("/event_click/slot=1&group=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.PATCH("/event_click").WithJSON(params).
+		Expect().Status(http.StatusMethodNotAllowed)
 
-	e.DELETE("/event_click/slot=1&group=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.DELETE("/event_click").WithJSON(params).
+		Expect().Status(http.StatusMethodNotAllowed)
 
-	e.HEAD("/event_click/slot=1&group=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.HEAD("/event_click").WithJSON(params).
+		Expect().Status(http.StatusBadRequest)
 }
 
 func TestEventClickFailureWrongSlot(t *testing.T) {
@@ -216,7 +227,13 @@ func TestEventClickFailureWrongSlot(t *testing.T) {
 
 	e := httpexpect.Default(t, server.URL)
 
-	e.POST("/event_click/slot=-1&group=1&banner=1").
+	params := map[string]interface{}{
+		"slot":   -1,
+		"banner": 1,
+		"group":  1,
+	}
+
+	e.POST("/event_click").WithJSON(params).
 		Expect().
 		Status(http.StatusNotFound).JSON().IsObject()
 }
@@ -230,7 +247,13 @@ func TestEventClickFailureWrongGroup(t *testing.T) {
 
 	e := httpexpect.Default(t, server.URL)
 
-	e.POST("/event_click/slot=1&group=-1&banner=1").
+	params := map[string]interface{}{
+		"slot":   1,
+		"banner": 1,
+		"group":  -1,
+	}
+
+	e.POST("/event_click").WithJSON(params).
 		Expect().
 		Status(http.StatusNotFound).JSON().IsObject()
 }
@@ -244,7 +267,13 @@ func TestEventClickFailureWrongBanner(t *testing.T) {
 
 	e := httpexpect.Default(t, server.URL)
 
-	e.POST("/event_click/slot=1&group=1&banner=-1").
+	params := map[string]interface{}{
+		"slot":   1,
+		"banner": -1,
+		"group":  1,
+	}
+
+	e.POST("/event_click").WithJSON(params).
 		Expect().
 		Status(http.StatusNotFound).JSON().IsObject()
 }
@@ -258,7 +287,13 @@ func TestEventClickFailureWrongPairSlotBanner(t *testing.T) {
 
 	e := httpexpect.Default(t, server.URL)
 
-	e.POST("/event_click/slot=1&group=1&banner=1").
+	params := map[string]interface{}{
+		"slot":   1,
+		"banner": 1,
+		"group":  1,
+	}
+
+	e.POST("/event_click").WithJSON(params).
 		Expect().
 		Status(http.StatusNotFound).JSON().IsObject()
 }
@@ -273,7 +308,12 @@ func TestRemoveBannerSuccess(t *testing.T) {
 	e := httpexpect.Default(t, server.URL)
 
 	// сперва добавляем баннер, чтобы потом его удалить
-	e.POST("/add_banner_to_slot/slot=1&banner=1").
+	params := map[string]interface{}{
+		"slot":   1,
+		"banner": 1,
+	}
+
+	e.POST("/add_banner_to_slot").WithJSON(params).
 		Expect().
 		Status(http.StatusOK).JSON()
 
@@ -343,24 +383,28 @@ func TestAddBannerSuccess(t *testing.T) {
 
 	e := httpexpect.Default(t, server.URL)
 
-	e.POST("/add_banner_to_slot/slot=1&banner=1").
+	params := map[string]interface{}{
+		"slot":   1,
+		"banner": 1,
+	}
+	e.POST("/add_banner_to_slot").WithJSON(params).
 		Expect().
-		Status(http.StatusOK).JSON()
+		Status(http.StatusOK).JSON().IsObject()
 
 	// убираем добавленный баннер
 	e.DELETE("/remove_banner_from_slot/slot=1&banner=1").
 		Expect().
 		Status(http.StatusOK).JSON()
 
-	e.GET("/add_banner_to_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.GET("/add_banner_to_slot").Expect().Status(http.StatusMethodNotAllowed)
 
-	e.PUT("/add_banner_to_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.PUT("/add_banner_to_slot").Expect().Status(http.StatusMethodNotAllowed)
 
-	e.PATCH("/add_banner_to_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.PATCH("/add_banner_to_slot").Expect().Status(http.StatusMethodNotAllowed)
 
-	e.DELETE("/add_banner_to_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.DELETE("/add_banner_to_slot").Expect().Status(http.StatusMethodNotAllowed)
 
-	e.HEAD("/add_banner_to_slot/slot=1&banner=1").Expect().Status(http.StatusMethodNotAllowed)
+	e.HEAD("/add_banner_to_slot").Expect().Status(http.StatusMethodNotAllowed)
 }
 
 func TestAddBannerFailureWrongBanner(t *testing.T) {
@@ -372,7 +416,12 @@ func TestAddBannerFailureWrongBanner(t *testing.T) {
 
 	e := httpexpect.Default(t, server.URL)
 
-	e.POST("/add_banner_to_slot/slot=1&banner=-1").
+	params := map[string]interface{}{
+		"slot":   1,
+		"banner": -1,
+	}
+
+	e.POST("/add_banner_to_slot").WithJSON(params).
 		Expect().
 		Status(http.StatusNotFound).JSON().IsObject()
 }
@@ -386,7 +435,12 @@ func TestAddBannerFailureWrongSlot(t *testing.T) {
 
 	e := httpexpect.Default(t, server.URL)
 
-	e.POST("/add_banner_to_slot/slot=-1&banner=1").
+	params := map[string]interface{}{
+		"slot":   -1,
+		"banner": 1,
+	}
+
+	e.POST("/add_banner_to_slot").WithJSON(params).
 		Expect().
 		Status(http.StatusNotFound).JSON().IsObject()
 }
@@ -400,13 +454,18 @@ func TestAddBannerFailureExistsRelation(t *testing.T) {
 
 	e := httpexpect.Default(t, server.URL)
 
+	params := map[string]interface{}{
+		"slot":   1,
+		"banner": 1,
+	}
+
 	// добавляем первый баннер
-	e.POST("/add_banner_to_slot/slot=1&banner=1").
+	e.POST("/add_banner_to_slot").WithJSON(params).
 		Expect().
 		Status(http.StatusOK).JSON().IsObject()
 
 	// пробуем добавить такой же
-	e.POST("/add_banner_to_slot/slot=1&banner=1").
+	e.POST("/add_banner_to_slot").WithJSON(params).
 		Expect().
 		Status(http.StatusUnprocessableEntity).JSON().IsObject()
 

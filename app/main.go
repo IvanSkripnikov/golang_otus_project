@@ -23,13 +23,13 @@ var routes = []route{
 
 	newRoute(http.MethodGet, "/banners/([0-9]+)", controllers.BannerHandler),
 
-	newRoute(http.MethodPost, "/add_banner_to_slot/([\\S]+)", controllers.AddBannerHandler),
+	newRoute(http.MethodPost, "/add_banner_to_slot", controllers.AddBannerHandler),
 
 	newRoute(http.MethodDelete, "/remove_banner_from_slot/([\\S]+)", controllers.RemoveBannerHandler),
 
 	newRoute(http.MethodGet, "/get_banner_for_show/([\\S]+)", controllers.GetBannerForShowHandler),
 
-	newRoute(http.MethodPost, "/event_click/([\\S]+)", controllers.ClickHandler),
+	newRoute(http.MethodPost, "/event_click", controllers.ClickHandler),
 }
 
 func initHTTPServer() {
