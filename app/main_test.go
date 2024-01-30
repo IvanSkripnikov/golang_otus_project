@@ -215,7 +215,7 @@ func TestEventClickSuccess(t *testing.T) {
 		Expect().Status(http.StatusMethodNotAllowed)
 
 	e.HEAD("/event_click").WithJSON(params).
-		Expect().Status(http.StatusBadRequest)
+		Expect().Status(http.StatusMethodNotAllowed)
 }
 
 func TestEventClickFailureWrongSlot(t *testing.T) {

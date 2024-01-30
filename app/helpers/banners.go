@@ -186,8 +186,6 @@ func RemoveBannerFromSlot(w http.ResponseWriter, r *http.Request) {
 
 	checks["slot"] = slotID
 
-	fmt.Println(checks)
-
 	if !checkExistsObjects(w, checks) {
 		return
 	}
