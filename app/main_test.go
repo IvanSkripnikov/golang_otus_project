@@ -214,7 +214,7 @@ func TestEventClickSuccess(t *testing.T) {
 	e.DELETE("/event_click").WithJSON(params).
 		Expect().Status(http.StatusMethodNotAllowed)
 
-	e.HEAD("/event_click").WithJSON(params).
+	e.HEAD("/event_click").
 		Expect().Status(http.StatusMethodNotAllowed)
 }
 
