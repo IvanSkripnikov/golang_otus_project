@@ -1,0 +1,84 @@
+name: Otus project checks
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  GO111MODULE: "on"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ~1.20
+
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Linters
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.55.2
+          working-directory: ./app
+
+  test-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract branch name
+        run: echo "BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ^1.20
+
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Integration tests
+        run: make test-integration
+
+  test-core:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract branch name
+        run: echo "BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ^1.20
+
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Core tests
+        run: make test-core
+
+  tests_by_makefile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ^1.20
+
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: make run
+        run: make run
+
+      - name: make test
+        run: make test
+
+      - name: make down
+        run: make down
+
+      - name: make lint
+        run: make lint

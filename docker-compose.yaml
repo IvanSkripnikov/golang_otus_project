@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: build/api/Dockerfile
+    container_name: api
+    env_file:
+      - .env
+    networks:
+      - rabbitmq_go_net
+    ports:
+      - 8080:8080
+
+  db:
+    build:
+      context: .
+      dockerfile: build/db/Dockerfile
+    container_name: db
+    env_file:
+      - .env
+    ports:
+      - 3306:3306
+    restart: always
+    networks:
+      - rabbitmq_go_net
+    volumes:
+      - type: volume
+        source: db-data1
+        target: /var/lib/mysql
+        volume:
+          nocopy: true
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - rabbitmq_go_net
+
+networks:
+  rabbitmq_go_net:
+    driver: bridge
+
+volumes:
+  db-data1:

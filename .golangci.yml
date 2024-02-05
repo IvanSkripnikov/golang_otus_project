@@ -1,0 +1,107 @@
+run:
+  tests: true
+
+linters-settings:
+  funlen:
+    lines: 150
+    statements: 80
+
+  depguard:
+    rules:
+      main:
+        # List of allowed packages.
+        allow:
+          - bytes
+          - context
+          - database/sql
+          - encoding/json
+          - errors
+          - flag
+          - fmt
+          - github.com/DATA-DOG/go-sqlmock
+          - github.com/gavv/httpexpect/v2
+          - github.com/go-sql-driver/mysql
+          - github.com/IvanSkripnikov/golang_otus_project/components
+          - github.com/IvanSkripnikov/golang_otus_project/config
+          - github.com/IvanSkripnikov/golang_otus_project/controllers
+          - github.com/IvanSkripnikov/golang_otus_project/database
+          - github.com/IvanSkripnikov/golang_otus_project/helpers
+          - github.com/IvanSkripnikov/golang_otus_project/logger
+          - github.com/IvanSkripnikov/golang_otus_project/models
+          - github.com/IvanSkripnikov/golang_otus_project/queue
+          - github.com/rabbitmq/amqp091-go
+          - io
+          - log
+          - math
+          - net/http
+          - os
+          - regexp
+          - sort
+          - strconv
+          - strings
+          - testing
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck
+        - dupl
+        - gocyclo
+        - gosec
+        - goconst
+        - gosimple
+
+linters:
+  disable-all: true
+  enable:
+    - asciicheck
+    - bodyclose
+    - depguard
+    - dogsled
+    - dupl
+    - durationcheck
+    - errorlint
+    - exhaustive
+    - exportloopref
+    - funlen
+    - gci
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - godot
+    - gofmt
+    - gofumpt
+    - goheader
+    - gomoddirectives
+    - gomodguard
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - importas
+    - ineffassign
+    - lll
+    - makezero
+    - misspell
+    - nestif
+    - nilerr
+    - noctx
+    - nolintlint
+    - prealloc
+    - predeclared
+    - revive
+    - rowserrcheck
+    - sqlclosecheck
+    - staticcheck
+    - stylecheck
+    - tagliatelle
+    - thelper
+    - tparallel
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - wastedassign
+    - whitespace
